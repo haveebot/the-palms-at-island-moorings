@@ -2,15 +2,15 @@
 
 _Live list. Newest decisions at top._
 
-## Outward-facing (needs Winston's go — NOT done in the scaffold)
+## Outward-facing
 
-- [ ] **GitHub repo** — `haveebot/the-palms-at-island-moorings` (public, per Vercel contributor-onboarding rule)
-- [ ] **Vercel project** — `haveebots-projects` scope, autodeploy on push
-- [ ] **DNS** — point `thepalmsatislandmoorings.com` (apex/www) at Vercel; decide `thepalms.dev` usage (hub subdomain + email)
+- [x] **GitHub repo** — `haveebot/the-palms-at-island-moorings` (public) ✅ 2026-06-19
+- [x] **Vercel project** — `the-palms-at-island-moorings` in `haveebots-projects`, autodeploy on push ✅
+- [x] **DNS / domain** — `thepalmsatislandmoorings.com` LIVE (apex 200, www→apex 308), `ssoProtection:null` ✅
+- [ ] **`thepalms.dev`** — intentionally NOT attached to this project; reserved for the ops hub (`hub.thepalms.dev`) + email
 - [ ] **Google Workspace** on `thepalms.dev` — inbound interest address + Collie/ops mailboxes
-- [ ] **Lead store** — provision the `register-interest` persistence (the seam in `src/lib/leads.ts`):
-      Neon `palms_leads` table (FC Hub pattern) **or** forward to a `thepalms.dev` hub **or** Resend email-to-inbox
-- [ ] Collie GitHub collaborator invite once repo exists
+- [ ] ⚠️ **Lead store — REQUIRED BEFORE DRIVING TRAFFIC.** `register-interest` currently persists to logs only (ephemeral on Vercel). Wire the seam in `src/lib/leads.ts`: Neon `palms_leads` (FC Hub pattern) **or** forward to a `thepalms.dev` hub **or** Resend email-to-inbox. Site is noindexed + unadvertised, so safe until we promote it.
+- [ ] Collie GitHub collaborator invite (when she's ready to work in-repo)
 
 ## Content / brand (pending Farley Creative)
 
