@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+/*
+ * The Palms at Island Moorings — PLACEHOLDER brand tokens.
+ *
+ * ⚠️  DELIBERATE PLACEHOLDERS. Collie Farley / Farley Creative owns the real
+ *     identity. The moment her brand lands, swap this whole @theme block.
+ *     These values are tuned to read as "coastal luxury / waterfront" so the
+ *     pre-sales shell looks intentional — not a default template — while
+ *     staying obviously swappable. Do not treat any color/type here as final.
+ */
+@theme {
+  /* Foundation (≈90% of surface) */
+  --color-ink: #14201E;     /* deep waterline ink — primary text */
+  --color-shell: #F4F0E9;   /* warm shell white — page background */
+  --color-sand: #E7DFD2;    /* warm sand neutral fill */
+  --color-fog: #DDE3E1;     /* cool fog neutral fill */
+
+  /* Accents (used sparingly) */
+  --color-brass: #B08A4F;   /* brushed brass — CTAs, fine rules, "the click color" */
+  --color-harbor: #2E4A52;  /* deep harbor teal — anchor, section headers */
+  --color-palm: #5B6F52;    /* muted palm green — tertiary */
+
+  /* Semantic aliases */
+  --color-foreground: var(--color-ink);
+  --color-background: var(--color-shell);
+  --color-accent: var(--color-brass);
+  --color-anchor: var(--color-harbor);
+  --color-muted: #6A6258;
+
+  /* Typography — display serif (luxury real-estate cadence) + clean sans body */
+  --font-display: "Cormorant Garamond", "Times New Roman", "Times", serif;
+  --font-sans: "Montserrat", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html, body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+}
+
+/* Eyebrow — small-caps tracked label used above section headers */
+.eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--color-accent);
+}
+
+/* Display heading helper */
+.display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  line-height: 1.04;
+  letter-spacing: 0.01em;
+}
+
+/* Hairline rule in brass — a fine luxury divider */
+.hairline {
+  height: 1px;
+  background: var(--color-accent);
+  opacity: 0.55;
+}
+
+/* Hero fade-in — CSS-only, runs on load (above-the-fold, no observer wait) */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in { animation: fade-in 800ms ease-out both; }
+.animate-fade-in-delayed { animation: fade-in 800ms ease-out 220ms both; }
+
+/* Reveal — restrained scroll-into-view fade+translate */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 650ms ease-out, transform 650ms ease-out;
+  will-change: opacity, transform;
+}
+.reveal-in { opacity: 1; transform: translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-fade-in-delayed { animation: none; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+}

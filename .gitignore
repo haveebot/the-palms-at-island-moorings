@@ -1,0 +1,11 @@
+node_modules
+.next
+out
+.vercel
+.env*.local
+.DS_Store
+*.tsbuildinfo
+next-env.d.ts
+
+# Brand / render assets dropped for review but not yet committed to public/
+docs/incoming/
