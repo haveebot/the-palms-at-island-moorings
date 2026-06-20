@@ -17,8 +17,10 @@ _Live list. Newest decisions at top._
 - [x] **Marketing** — lead-source breakdown, public-site link, campaign tracker. ✅
 
 ### Hub follow-ups (next)
-- [x] **Source the agent database** — **101 real web-verified contacts** loaded (84 agents + 17 partners, 64 w/ email): Houston 18 · Austin 16 · SA 16 · Dallas 15 · Coastal Bend 36, incl. the Galati Yacht Sales marina partner. ✅ 2026-06-19 (commit `0b0b39d`)
-- [ ] **Source deeper + enrich** — more per-market depth; find emails for the 37 contacts captured without one (name+brokerage+market are there)
+- [x] **Source the agent database** — **338 real web-verified contacts** (139 emailable; 321 agents + 17 partners): Coastal Bend 166 · Houston 51 · Dallas 47 · Austin 42 · SA 32, incl. the Galati Yacht Sales marina partner + Kuper's Port A coastal arm. ✅ 2026-06-20
+- [x] **Interactive Sales tool** — search · multi-select checkboxes → broadcast-to-selected · type/market/status/tag/has-email filters · sort · summary chips · clickable tags. ✅ (commit `d316206`)
+- [ ] **Enrich the 199 without public email** — name + brokerage + market captured; many have phones
+- [ ] **Migrate the doc-store to Postgres** — at 338 records `/hub/sales` loads in ~2.2s (N+1 Blob fetches); it's near the ceiling. The `src/lib/store.ts` seam keeps this a contained swap
 - [ ] _Not fabricated:_ residences/documents/leads stay sample/empty until Shana's real specs+prices, Collie's floor plans, and real buyers exist
 - [ ] **Wire broadcast send** — flips on with the `.dev` email sender (same gate as lead alerts)
 - [ ] **Per-user logins** for Shana + Collie (replace the shared demo password)
