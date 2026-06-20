@@ -1,35 +1,52 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { verifySession, HUB_COOKIE } from "@/lib/hub-session";
 
 /**
- * Basic-auth gate for the internal /ops surface (Next 16 "proxy" convention,
- * formerly middleware). Credentials come from OPS_USER / OPS_PASSWORD in the
- * Vercel project env. Public site is untouched — matcher is scoped to /ops.
+ * Domain split + hub auth (Next 16 "proxy" convention).
+ *
+ *   thepalmsatislandmoorings.com  → public marketing only (hub paths 404)
+ *   thepalms.dev                  → the operator hub (login → leads)
+ *   *.vercel.app / localhost      → both reachable (for testing); hub still gated
  */
-export const config = { matcher: ["/ops/:path*", "/ops"] };
+export const config = {
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|brand|og|robots.txt).*)"],
+};
 
-export function proxy(req: NextRequest) {
-  const user = process.env.OPS_USER;
-  const pass = process.env.OPS_PASSWORD;
+export async function proxy(req: NextRequest) {
+  const host = (req.headers.get("host") || "").toLowerCase();
+  const { pathname } = req.nextUrl;
 
-  // If creds aren't configured, fail closed (don't expose leads).
-  if (user && pass) {
-    const header = req.headers.get("authorization");
-    if (header?.startsWith("Basic ")) {
-      try {
-        const decoded = atob(header.slice(6));
-        const idx = decoded.indexOf(":");
-        const u = decoded.slice(0, idx);
-        const p = decoded.slice(idx + 1);
-        if (u === user && p === pass) return NextResponse.next();
-      } catch {
-        // fall through to 401
-      }
+  const isMarketing = host.includes("thepalmsatislandmoorings.com");
+  const isHub = host === "thepalms.dev" || host.endsWith(".thepalms.dev");
+
+  // Public marketing domain: keep the hub off it.
+  if (isMarketing) {
+    if (pathname === "/hub" || pathname.startsWith("/hub/") || pathname === "/ops") {
+      return new NextResponse("Not found", { status: 404 });
     }
+    return NextResponse.next();
   }
 
-  return new NextResponse("Authentication required.", {
-    status: 401,
-    headers: { "WWW-Authenticate": 'Basic realm="Palms Ops", charset="UTF-8"' },
-  });
+  const loginOpen =
+    pathname === "/hub/login" ||
+    pathname === "/api/hub/login" ||
+    pathname === "/api/hub/logout";
+
+  const secret = process.env.HUB_SESSION_SECRET || "";
+  const authed = !!secret && (await verifySession(req.cookies.get(HUB_COOKIE)?.value, secret));
+
+  // Root of the hub domain → dashboard if authed, else the login landing.
+  if (isHub && pathname === "/") {
+    return authed
+      ? NextResponse.rewrite(new URL("/hub", req.url))
+      : NextResponse.redirect(new URL("/hub/login", req.url));
+  }
+
+  // Gate the hub everywhere it can be reached.
+  if ((pathname === "/hub" || pathname.startsWith("/hub/")) && !loginOpen && !authed) {
+    return NextResponse.redirect(new URL("/hub/login", req.url));
+  }
+
+  return NextResponse.next();
 }

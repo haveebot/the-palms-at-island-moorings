@@ -40,7 +40,7 @@ export async function notifyNewLead(lead: NewLead): Promise<void> {
           `Phone: ${lead.phone || "—"}\n` +
           `Notes: ${lead.notes || "—"}\n` +
           `ID:    ${lead.id}\n\n` +
-          `See all: https://thepalms.dev/ops (or the Vercel URL /ops)`,
+          `See all in the hub: https://thepalms.dev`,
       }),
     });
   } catch (err) {
