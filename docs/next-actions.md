@@ -17,7 +17,9 @@ _Live list. Newest decisions at top._
 - [x] **Marketing** — lead-source breakdown, public-site link, campaign tracker. ✅
 
 ### Hub follow-ups (next)
-- [ ] **Source the agent database** — feeder-city (Houston/Austin/SA/Dallas) + Coastal Bend luxury agents + marina/boat (yacht brokers, slip-holders), the way we built Sage's roster
+- [x] **Source the agent database** — **101 real web-verified contacts** loaded (84 agents + 17 partners, 64 w/ email): Houston 18 · Austin 16 · SA 16 · Dallas 15 · Coastal Bend 36, incl. the Galati Yacht Sales marina partner. ✅ 2026-06-19 (commit `0b0b39d`)
+- [ ] **Source deeper + enrich** — more per-market depth; find emails for the 37 contacts captured without one (name+brokerage+market are there)
+- [ ] _Not fabricated:_ residences/documents/leads stay sample/empty until Shana's real specs+prices, Collie's floor plans, and real buyers exist
 - [ ] **Wire broadcast send** — flips on with the `.dev` email sender (same gate as lead alerts)
 - [ ] **Per-user logins** for Shana + Collie (replace the shared demo password)
 - [ ] **Lead delete** in the UI (units have delete; leads don't yet)
