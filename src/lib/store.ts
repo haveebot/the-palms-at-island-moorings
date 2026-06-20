@@ -23,7 +23,10 @@ async function readCollection<T>(collection: string): Promise<T[]> {
   const hit = blobs.find((b) => b.pathname === PATH(collection));
   if (!hit) return [];
   try {
-    return (await (await fetch(hit.url, { cache: "no-store" })).json()) as T[];
+    // Cache-bust query forces a fresh origin read — eliminates the ~2s
+    // read-after-write lag from the Blob CDN serving a stale overwrite.
+    const url = `${hit.url}?t=${Date.now()}`;
+    return (await (await fetch(url, { cache: "no-store" })).json()) as T[];
   } catch {
     return [];
   }
