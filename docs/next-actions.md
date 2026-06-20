@@ -7,9 +7,11 @@ _Live list. Newest decisions at top._
 - [x] **GitHub repo** — `haveebot/the-palms-at-island-moorings` (public) ✅ 2026-06-19
 - [x] **Vercel project** — `the-palms-at-island-moorings` in `haveebots-projects`, autodeploy on push ✅
 - [x] **DNS / domain** — `thepalmsatislandmoorings.com` LIVE (apex 200, www→apex 308), `ssoProtection:null` ✅
+- [x] **Lead store** — wired to a dedicated **Vercel Blob store** (`the-palms-leads`), one object per lead via `src/lib/leads.ts`. ✅ 2026-06-19 _(v1; migrate to Postgres when the hub grows — seam is one file)_
+- [x] **Ops view** — `/ops` lists leads, gated by basic auth (`OPS_USER`/`OPS_PASSWORD` in Vercel env). Seed of the pre-sales hub. ✅
+- [ ] **Lead alerts** — code shipped, **env-gated OFF** (`src/lib/notify.ts`): set `RESEND_API_KEY` + `LEAD_ALERT_TO` (+ `LEAD_ALERT_FROM`) to turn on. Cleanest sender = thepalms.dev Workspace, or a dedicated Resend key. Deliberately no borrowed creds.
 - [ ] **`thepalms.dev`** — intentionally NOT attached to this project; reserved for the ops hub (`hub.thepalms.dev`) + email
-- [ ] **Google Workspace** on `thepalms.dev` — inbound interest address + Collie/ops mailboxes
-- [ ] ⚠️ **Lead store — REQUIRED BEFORE DRIVING TRAFFIC.** `register-interest` currently persists to logs only (ephemeral on Vercel). Wire the seam in `src/lib/leads.ts`: Neon `palms_leads` (FC Hub pattern) **or** forward to a `thepalms.dev` hub **or** Resend email-to-inbox. Site is noindexed + unadvertised, so safe until we promote it.
+- [ ] **Google Workspace** on `thepalms.dev` — inbound interest address + Collie/ops mailboxes (unblocks lead alerts + a branded `/ops` home)
 - [ ] Collie GitHub collaborator invite (when she's ready to work in-repo)
 
 ## Content / brand (pending Farley Creative)

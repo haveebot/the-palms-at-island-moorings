@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { validateRegisterInterest } from "@/lib/leads-shared";
 import { persistRegisterInterest } from "@/lib/leads";
+import { notifyNewLead } from "@/lib/notify";
 
 export async function POST(req: Request) {
   let body: unknown;
@@ -22,6 +23,8 @@ export async function POST(req: Request) {
 
   try {
     const saved = await persistRegisterInterest(result.value);
+    // Best-effort alert (no-op until a sender is configured) — never block the response.
+    await notifyNewLead({ id: saved.id, ...result.value }).catch(() => {});
     return NextResponse.json({ ok: true, id: saved.id }, { status: 200 });
   } catch (err) {
     console.error("[palms] register-interest persist failed", err);
