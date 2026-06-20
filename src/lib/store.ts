@@ -13,6 +13,9 @@ export async function putDoc<T>(collection: string, id: string, data: T): Promis
     addRandomSuffix: false,
     allowOverwrite: true,
     contentType: "application/json",
+    // Operator hub: low traffic, edits must reflect immediately. Don't let the
+    // Blob CDN serve a stale copy after an overwrite/delete.
+    cacheControlMaxAge: 0,
   });
 }
 
