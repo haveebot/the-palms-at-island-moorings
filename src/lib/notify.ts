@@ -3,10 +3,12 @@ import "server-only";
 /**
  * New-lead alert — ENV-GATED, ships OFF.
  *
- * Sends only when BOTH `RESEND_API_KEY` and `LEAD_ALERT_TO` are set on the
- * project. Until a sender is chosen (cleanest: the thepalms.dev Workspace, or
- * a dedicated Resend key), this is a no-op — the lead is still stored and
- * visible in /ops. We deliberately do NOT borrow another project's creds.
+ * Email provider = GOOGLE WORKSPACE on thepalms.dev (decided 2026-06-20).
+ * When Workspace is connected (a sender mailbox like alerts@thepalms.dev +
+ * credentials), this sends the alert from a thepalms.dev address. The exact
+ * transport — Gmail API (OAuth) vs Workspace SMTP — is finalized when the
+ * Workspace is live. Until then this is a no-op: the lead is still stored and
+ * visible in the hub. No borrowed creds, no third-party ESP.
  */
 type NewLead = {
   id: string;
@@ -17,33 +19,12 @@ type NewLead = {
 };
 
 export async function notifyNewLead(lead: NewLead): Promise<void> {
-  const apiKey = process.env.RESEND_API_KEY;
   const to = process.env.LEAD_ALERT_TO;
-  if (!apiKey || !to) return; // off until a sender is configured
+  // Set once Google Workspace sending is wired (e.g. "alerts@thepalms.dev").
+  const workspaceReady = Boolean(process.env.WORKSPACE_SENDER_EMAIL);
+  if (!to || !workspaceReady) return; // off until Workspace is connected
 
-  const from = process.env.LEAD_ALERT_FROM || "onboarding@resend.dev";
-  try {
-    await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from,
-        to: to.split(",").map((s) => s.trim()),
-        subject: `New interest — The Palms (${lead.fullName})`,
-        text:
-          `New register-interest submission:\n\n` +
-          `Name:  ${lead.fullName}\n` +
-          `Email: ${lead.email}\n` +
-          `Phone: ${lead.phone || "—"}\n` +
-          `Notes: ${lead.notes || "—"}\n` +
-          `ID:    ${lead.id}\n\n` +
-          `See all in the hub: https://thepalms.dev`,
-      }),
-    });
-  } catch (err) {
-    console.error("[palms] lead notify failed", err);
-  }
+  // TODO(workspace-send): deliver via Google Workspace (Gmail API or SMTP) from
+  // WORKSPACE_SENDER_EMAIL → `to`. Implemented when Workspace creds land.
+  console.info("[palms] lead alert queued for Workspace send", { id: lead.id, to });
 }

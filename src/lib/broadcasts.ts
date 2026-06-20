@@ -10,9 +10,10 @@ export async function listBroadcasts(): Promise<Broadcast[]> {
 }
 
 /**
- * Save a broadcast. Sending is gated on the email sender (the same `.dev`
- * Workspace pending for lead alerts) — until then everything is saved as a
- * "draft" and the segment + body are ready to fire the moment a sender exists.
+ * Save a broadcast. Sending fans out via GOOGLE WORKSPACE on thepalms.dev
+ * (the email provider, decided 2026-06-20 — same sender pending for lead
+ * alerts). Until Workspace is connected, everything is saved as a "draft" with
+ * the segment + body ready to fire the moment the sender exists.
  */
 export async function saveBroadcast(input: {
   subject: string;
@@ -21,7 +22,7 @@ export async function saveBroadcast(input: {
   recipientCount: number;
 }): Promise<Broadcast> {
   const id = `b_${Math.random().toString(36).slice(2, 10)}`;
-  const senderReady = Boolean(process.env.RESEND_API_KEY && process.env.LEAD_ALERT_FROM);
+  const senderReady = Boolean(process.env.WORKSPACE_SENDER_EMAIL);
   const b: Broadcast = {
     id,
     subject: input.subject.trim(),
