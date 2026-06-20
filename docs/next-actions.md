@@ -20,7 +20,8 @@ _Live list. Newest decisions at top._
 - [x] **Source the agent database** — **338 real web-verified contacts** (139 emailable; 321 agents + 17 partners): Coastal Bend 166 · Houston 51 · Dallas 47 · Austin 42 · SA 32, incl. the Galati Yacht Sales marina partner + Kuper's Port A coastal arm. ✅ 2026-06-20
 - [x] **Interactive Sales tool** — search · multi-select checkboxes → broadcast-to-selected · type/market/status/tag/has-email filters · sort · summary chips · clickable tags. ✅ (commit `d316206`)
 - [ ] **Enrich the 199 without public email** — name + brokerage + market captured; many have phones
-- [ ] **Migrate the doc-store to Postgres** — at 338 records `/hub/sales` loads in ~2.2s (N+1 Blob fetches); it's near the ceiling. The `src/lib/store.ts` seam keeps this a contained swap
+- [x] **Backups** — automated daily cron (`/api/cron/backup`, `vercel.json`, gated on `CRON_SECRET`) snapshots all collections to `backups/`; + one-time off-Vercel local copy in `~/palms-backups/`. ✅ 2026-06-20
+- [ ] **Migrate the doc-store to Postgres (Neon)** — the scalable fix for the N+1 (~2.2s at 338 records) + native PITR/backups. Plan: minimal **kv-jsonb table** swap inside `src/lib/store.ts` (keeps the interface → no caller changes; `listDocs` → 1 query). **Needs: Winston provisions a Neon DB on the Palms Vercel project (Storage → Create Database → Neon → injects `DATABASE_URL`).** Then: add `pg`, schema, migrate from the latest `backups/` JSON, swap store.ts. Document file binaries stay on Blob.
 - [ ] _Not fabricated:_ residences/documents/leads stay sample/empty until Shana's real specs+prices, Collie's floor plans, and real buyers exist
 - [ ] **Wire broadcast send** — flips on with the `.dev` email sender (same gate as lead alerts)
 - [ ] **Per-user logins** for Shana + Collie (replace the shared demo password)
