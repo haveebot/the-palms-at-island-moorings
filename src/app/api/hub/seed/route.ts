@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { seedSampleUnits } from "@/lib/units";
+import { seedSampleContacts } from "@/lib/contacts";
 
-// Seeds clearly-marked sample residences, only if inventory is empty.
+// Seeds clearly-marked sample residences + sales contacts, each only if empty.
 export async function POST() {
-  const seeded = await seedSampleUnits();
-  return NextResponse.json({ ok: true, seeded });
+  const [units, contacts] = await Promise.all([seedSampleUnits(), seedSampleContacts()]);
+  return NextResponse.json({ ok: true, units, contacts });
 }

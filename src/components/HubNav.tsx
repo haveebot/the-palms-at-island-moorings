@@ -7,6 +7,9 @@ const LINKS = [
   { href: "/hub", label: "Dashboard" },
   { href: "/hub/leads", label: "Leads" },
   { href: "/hub/inventory", label: "Inventory" },
+  { href: "/hub/sales", label: "Sales" },
+  { href: "/hub/marketing", label: "Marketing" },
+  { href: "/hub/documents", label: "Documents" },
 ];
 
 export function HubNav() {
