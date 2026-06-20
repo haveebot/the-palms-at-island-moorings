@@ -12,7 +12,13 @@ _Live list. Newest decisions at top._
 - [x] **Lead store** — wired to a dedicated **Vercel Blob store** (`the-palms-leads`), one object per lead via `src/lib/leads.ts`. ✅ _(v1; migrate to Postgres when the hub grows — seam is one file)_
 - [x] **Operator hub** — full pre-sales ops on `thepalms.dev`: **Dashboard** (stats + lead funnel + needs-first-touch), **Leads CRM** (`/hub/leads` — stages, assignee, notes/activity, residence link, detail editor), **Inventory** (`/hub/inventory` — add/edit/delete residences, inline status, price/specs, sample seeding). Blob doc store (`leads/` + `units/`), gated `/api/hub/*`. ✅ 2026-06-19 (commit `e90b0f5`)
 
+- [x] **Sales** — contacts database (agents/partners/prospects), segment builder, broadcast composer (drafts; send rides the pending `.dev` sender). ✅ 2026-06-19 (commit `4cce150`)
+- [x] **Documents** — Blob file library (upload/categorize/download/delete). ✅
+- [x] **Marketing** — lead-source breakdown, public-site link, campaign tracker. ✅
+
 ### Hub follow-ups (next)
+- [ ] **Source the agent database** — feeder-city (Houston/Austin/SA/Dallas) + Coastal Bend luxury agents + marina/boat (yacht brokers, slip-holders), the way we built Sage's roster
+- [ ] **Wire broadcast send** — flips on with the `.dev` email sender (same gate as lead alerts)
 - [ ] **Per-user logins** for Shana + Collie (replace the shared demo password)
 - [ ] **Lead delete** in the UI (units have delete; leads don't yet)
 - [ ] **Real residence data** to replace the 8 seeded samples; **Collie's brand** to skin the hub
