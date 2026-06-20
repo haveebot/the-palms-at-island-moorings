@@ -1,53 +1,70 @@
 import "server-only";
-import { put, list, del } from "@vercel/blob";
+import { put, list } from "@vercel/blob";
 
 /**
- * Tiny document store over Vercel Blob — one JSON object per record at a STABLE
- * path (`<collection>/<id>.json`) so records can be updated (overwritten).
- * Adequate for a single development's pre-sales volume; swap for Postgres later
- * without touching callers.
+ * Document store over Vercel Blob — ONE object per collection
+ * (`collections/<name>.json` = the full array). A list is a single fetch (not
+ * N), which is the right-sized fix for a single development's hub (contacts in
+ * the thousands, not millions). Reads stay fast as the roster grows.
+ *
+ * Trade-off: writes are read-modify-write of the whole collection, so two
+ * *simultaneous* writes to the SAME collection can last-write-win (one edit
+ * lost, recoverable). Fine for a 2–3 person operator team making occasional
+ * edits. If this ever becomes a multi-development platform with concurrent
+ * teams, move to Postgres (Neon) — the interface below stays identical, so it's
+ * a contained swap. Document file binaries live separately under `docfiles/`.
  */
-export async function putDoc<T>(collection: string, id: string, data: T): Promise<void> {
-  await put(`${collection}/${id}.json`, JSON.stringify(data), {
+type WithId = { id: string };
+
+const PATH = (c: string) => `collections/${c}.json`;
+
+async function readCollection<T>(collection: string): Promise<T[]> {
+  const { blobs } = await list({ prefix: PATH(collection) });
+  const hit = blobs.find((b) => b.pathname === PATH(collection));
+  if (!hit) return [];
+  try {
+    return (await (await fetch(hit.url, { cache: "no-store" })).json()) as T[];
+  } catch {
+    return [];
+  }
+}
+
+async function writeCollection<T>(collection: string, rows: T[]): Promise<void> {
+  await put(PATH(collection), JSON.stringify(rows), {
     access: "public",
     addRandomSuffix: false,
     allowOverwrite: true,
     contentType: "application/json",
-    // Operator hub: low traffic, edits must reflect immediately. Don't let the
-    // Blob CDN serve a stale copy after an overwrite/delete.
-    cacheControlMaxAge: 0,
+    cacheControlMaxAge: 0, // operator hub — reads must reflect writes immediately
   });
 }
 
 export async function listDocs<T>(collection: string): Promise<T[]> {
-  const { blobs } = await list({ prefix: `${collection}/` });
-  const docs = await Promise.all(
-    blobs.map(async (b) => {
-      try {
-        return (await (await fetch(b.url, { cache: "no-store" })).json()) as T;
-      } catch {
-        return null;
-      }
-    }),
-  );
-  return docs.filter((d) => d !== null) as T[];
+  return readCollection<T>(collection);
 }
 
-export async function getDoc<T>(collection: string, id: string): Promise<T | null> {
-  const path = `${collection}/${id}.json`;
-  const { blobs } = await list({ prefix: path });
-  const hit = blobs.find((b) => b.pathname === path);
-  if (!hit) return null;
-  try {
-    return (await (await fetch(hit.url, { cache: "no-store" })).json()) as T;
-  } catch {
-    return null;
-  }
+export async function getDoc<T extends WithId>(
+  collection: string,
+  id: string,
+): Promise<T | null> {
+  const rows = await readCollection<T>(collection);
+  return rows.find((r) => r.id === id) ?? null;
+}
+
+export async function putDoc<T extends WithId>(
+  collection: string,
+  id: string,
+  data: T,
+): Promise<void> {
+  const rows = await readCollection<T>(collection);
+  const i = rows.findIndex((r) => r.id === id);
+  if (i >= 0) rows[i] = data;
+  else rows.push(data);
+  await writeCollection(collection, rows);
 }
 
 export async function deleteDoc(collection: string, id: string): Promise<void> {
-  const path = `${collection}/${id}.json`;
-  const { blobs } = await list({ prefix: path });
-  const hit = blobs.find((b) => b.pathname === path);
-  if (hit) await del(hit.url);
+  const rows = await readCollection<WithId>(collection);
+  const next = rows.filter((r) => r.id !== id);
+  if (next.length !== rows.length) await writeCollection(collection, next);
 }
