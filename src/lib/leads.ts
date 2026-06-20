@@ -1,67 +1,73 @@
 import "server-only";
-import { put, list } from "@vercel/blob";
-import type { RegisterInterestInput } from "./leads-shared";
+import { putDoc, listDocs, getDoc } from "./store";
+import type { RegisterInterestInput, Lead, LeadStage } from "./leads-shared";
 
-/**
- * Lead persistence — The Palms' OWN pre-sales pipeline (not FC agency leads).
- *
- * v1 store: a dedicated Vercel Blob store (`the-palms-leads`), one JSON object
- * per lead under `leads/` with an unguessable suffix. Adequate for low-volume
- * pre-sales on an unlaunched site; migrate to Postgres when the ops hub grows
- * (this file is the only thing that changes — the seam).
- */
+const COL = "leads";
+
 export type SavedLead = { id: string; receivedAt: string };
 
-export type StoredLead = {
-  id: string;
-  receivedAt: string;
-  fullName: string;
-  email: string;
-  phone?: string;
-  notes?: string;
-};
-
-const PREFIX = "leads/";
-
+/** Public site capture → a new lead at stage "new". */
 export async function persistRegisterInterest(
-  lead: RegisterInterestInput,
+  input: RegisterInterestInput,
 ): Promise<SavedLead> {
   const id = `pal_${Math.random().toString(36).slice(2, 10)}`;
-  const receivedAt = new Date().toISOString();
-
-  const record: StoredLead = {
+  const now = new Date().toISOString();
+  const lead: Lead = {
     id,
-    receivedAt,
-    fullName: lead.fullName,
-    email: lead.email,
-    phone: lead.phone,
-    notes: lead.notes,
+    receivedAt: now,
+    updatedAt: now,
+    fullName: input.fullName,
+    email: input.email,
+    phone: input.phone,
+    notes: input.notes,
+    source: "website",
+    stage: "new",
+    activity: [{ at: now, text: "Registered interest via the website." }],
   };
-
-  // One object per lead → no read-modify-write race. Random suffix → unguessable URL.
-  await put(`${PREFIX}${receivedAt}-${id}.json`, JSON.stringify(record), {
-    access: "public",
-    addRandomSuffix: true,
-    contentType: "application/json",
-  });
-
-  return { id, receivedAt };
+  await putDoc(COL, id, lead);
+  return { id, receivedAt: now };
 }
 
-/** For the /ops view — list + hydrate all stored leads, newest first. */
-export async function listLeads(): Promise<StoredLead[]> {
-  const { blobs } = await list({ prefix: PREFIX });
-  const records = await Promise.all(
-    blobs.map(async (b) => {
-      try {
-        const r = await fetch(b.url, { cache: "no-store" });
-        return (await r.json()) as StoredLead;
-      } catch {
-        return null;
-      }
-    }),
-  );
-  return records
-    .filter((r): r is StoredLead => r !== null)
-    .sort((a, b) => b.receivedAt.localeCompare(a.receivedAt));
+export async function listLeads(): Promise<Lead[]> {
+  const leads = await listDocs<Lead>(COL);
+  return leads.sort((a, b) => b.receivedAt.localeCompare(a.receivedAt));
+}
+
+export async function getLead(id: string): Promise<Lead | null> {
+  return getDoc<Lead>(COL, id);
+}
+
+export type LeadUpdate = {
+  stage?: LeadStage;
+  assignee?: string;
+  unitId?: string | null;
+  note?: string; // appended to activity
+};
+
+export async function updateLead(id: string, update: LeadUpdate): Promise<Lead | null> {
+  const lead = await getDoc<Lead>(COL, id);
+  if (!lead) return null;
+  const now = new Date().toISOString();
+  const activity = [...(lead.activity || [])];
+
+  if (update.stage && update.stage !== lead.stage) {
+    activity.unshift({ at: now, text: `Stage → ${update.stage}.` });
+    lead.stage = update.stage;
+  }
+  if (update.assignee !== undefined && update.assignee !== lead.assignee) {
+    activity.unshift({ at: now, text: `Assigned to ${update.assignee || "—"}.` });
+    lead.assignee = update.assignee || undefined;
+  }
+  if (update.unitId !== undefined) {
+    lead.unitId = update.unitId || undefined;
+    activity.unshift({ at: now, text: update.unitId ? `Linked to a residence.` : `Unlinked residence.` });
+  }
+  if (update.note && update.note.trim()) {
+    activity.unshift({ at: now, text: update.note.trim() });
+  }
+
+  lead.activity = activity;
+  lead.updatedAt = now;
+  await putDoc(COL, id, lead);
+  return lead;
 }
