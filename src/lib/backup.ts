@@ -1,5 +1,6 @@
 import "server-only";
-import { put, list } from "@vercel/blob";
+import { put } from "@vercel/blob";
+import { listDocs } from "./store";
 
 /**
  * Snapshot every doc-store collection into one timestamped JSON under
@@ -17,15 +18,7 @@ export async function backupAll(): Promise<{ records: number; key: string }> {
   };
   let records = 0;
   for (const c of COLLECTIONS) {
-    const { blobs } = await list({ prefix: `${c}/` });
-    const rows: unknown[] = [];
-    for (const b of blobs) {
-      try {
-        rows.push(await (await fetch(b.url, { cache: "no-store" })).json());
-      } catch {
-        /* skip unreadable */
-      }
-    }
+    const rows = await listDocs(c); // consolidated store (collections/<c>.json)
     snap.collections[c] = rows;
     records += rows.length;
   }
