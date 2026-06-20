@@ -21,7 +21,8 @@ _Live list. Newest decisions at top._
 - [x] **Interactive Sales tool** — search · multi-select checkboxes → broadcast-to-selected · type/market/status/tag/has-email filters · sort · summary chips · clickable tags. ✅ (commit `d316206`)
 - [ ] **Enrich the 199 without public email** — name + brokerage + market captured; many have phones
 - [x] **Backups** — automated daily cron (`/api/cron/backup`, `vercel.json`, gated on `CRON_SECRET`) snapshots all collections to `backups/`; + one-time off-Vercel local copy in `~/palms-backups/`. ✅ 2026-06-20
-- [ ] **Migrate the doc-store to Postgres (Neon)** — the scalable fix for the N+1 (~2.2s at 338 records) + native PITR/backups. Plan: minimal **kv-jsonb table** swap inside `src/lib/store.ts` (keeps the interface → no caller changes; `listDocs` → 1 query). **Needs: Winston provisions a Neon DB on the Palms Vercel project (Storage → Create Database → Neon → injects `DATABASE_URL`).** Then: add `pg`, schema, migrate from the latest `backups/` JSON, swap store.ts. Document file binaries stay on Blob.
+- [x] **Scalable store** — consolidated to one object per collection (`collections/<c>.json`); reads **2.2s→0.44s**, cache-bust kills read-after-write lag, same interface (zero caller changes). ✅ 2026-06-20 (commit `0b59a69`)
+- [ ] **Postgres/Neon (tier-2, only if multi-development platform)** — provisioning is ~90% API-scriptable (`POST /v1/storage/stores/integration`, plan `free_v3`) but gated on the interactive billing-authorization (1 dashboard click). Store interface is identical so the swap stays contained. Not needed at single-development scale.
 - [ ] _Not fabricated:_ residences/documents/leads stay sample/empty until Shana's real specs+prices, Collie's floor plans, and real buyers exist
 - [ ] **Wire broadcast send** — flips on with the `.dev` email sender (same gate as lead alerts)
 - [ ] **Per-user logins** for Shana + Collie (replace the shared demo password)
