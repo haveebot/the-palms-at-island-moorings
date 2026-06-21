@@ -23,7 +23,8 @@ _Live list. Newest decisions at top._
 - [x] **Pulled blocked rosters** — +161 agents (KW Coastal Bend, Martha Turner Bay Area, RE/MAX/Coldwell/BHHS Corpus, gaps sweep) → **499 contacts / 86 brokerages**. ✅ 2026-06-21
 - [x] **Email enrichment (verified-only)** — +112 real emails → **305 emailable**. Kuper 6→35, Spears 2→15, KW 0→17, etc. ✅
 - [x] **"Email firm" action** — one-click per brokerage row (drills in + targets composer). ✅
-- [ ] **Recover captcha-walled emails (~194 remaining)** — HAR / RE/MAX / BHHS / Gary Greene publish emails but block bots; needs a logged-in **Chrome MCP** browser pass. Many small firms publish phone-only (genuinely no email).
+- [x] **Phone-enriched + contactability dial-in** — +58 phones, +39 emails → **492 contacts, 341 emailable, 446 phone, 477 reachable (97%), 15 uncontactable**. UI shows phone(tel)+email(mailto) + has-phone filter. ✅ 2026-06-21
+- [ ] **Chrome browser pass (needs Winston to connect the extension)** — recovers the last walled emails (HAR/RE/MAX/BHHS/Gary Greene block bots) + the final 15 uncontactable. `list_connected_browsers` returned [] — connect Claude-in-Chrome and I'll run it.
 - [ ] **Fix agent-flagged data** — Julie Reupke = Compass; Dana Kisel = Phyllis Browning; "Natalia Muse"≈"Natasha Muse"; "Mark Rose"@Briggs unconfirmed.
 - [x] **Backups** — automated daily cron (`/api/cron/backup`, `vercel.json`, gated on `CRON_SECRET`) snapshots all collections to `backups/`; + one-time off-Vercel local copy in `~/palms-backups/`. ✅ 2026-06-20
 - [x] **Scalable store** — consolidated to one object per collection (`collections/<c>.json`); reads **2.2s→0.44s**, cache-bust kills read-after-write lag, same interface (zero caller changes). ✅ 2026-06-20 (commit `0b59a69`)
