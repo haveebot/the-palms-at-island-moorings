@@ -1,5 +1,5 @@
 import "server-only";
-import { put, del } from "@vercel/blob";
+import { del } from "@vercel/blob";
 import { putDoc, listDocs, getDoc, deleteDoc } from "./store";
 import type { DocRecord } from "./documents-shared";
 
@@ -10,19 +10,25 @@ export async function listDocuments(): Promise<DocRecord[]> {
   return all.sort((a, b) => b.uploadedAt.localeCompare(a.uploadedAt));
 }
 
-export async function createDocument(file: File, category: string): Promise<DocRecord> {
+/**
+ * Records a document whose binary is ALREADY in Blob — uploaded client-direct
+ * via `@vercel/blob/client` → /api/documents-upload, which streams the file
+ * straight to Blob and bypasses the 4.5MB serverless request-body cap. Here we
+ * only persist the metadata row.
+ */
+export async function recordDocument(input: {
+  name: string;
+  category: string;
+  url: string;
+  size: number;
+}): Promise<DocRecord> {
   const id = `doc_${Math.random().toString(36).slice(2, 10)}`;
-  // Actual file lives under docfiles/ so it never collides with the JSON records.
-  const blob = await put(`docfiles/${id}-${file.name}`, file, {
-    access: "public",
-    addRandomSuffix: true,
-  });
   const rec: DocRecord = {
     id,
-    name: file.name,
-    category: category || "Other",
-    url: blob.url,
-    size: file.size,
+    name: input.name,
+    category: input.category || "Other",
+    url: input.url,
+    size: input.size,
     uploadedAt: new Date().toISOString(),
   };
   await putDoc(COL, id, rec);

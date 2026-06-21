@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { upload } from "@vercel/blob/client";
 import { DOC_CATEGORIES, formatBytes, type DocRecord } from "@/lib/documents-shared";
 
 /** Group docs into category sections, ordered by DOC_CATEGORIES then any extras. */
@@ -22,26 +23,41 @@ function groupByCategory(docs: DocRecord[]): [string, DocRecord[]][] {
 export function DocumentsBoard({ docs }: { docs: DocRecord[] }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [category, setCategory] = useState(DOC_CATEGORIES[0]);
   const [err, setErr] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
 
-  async function upload(e: React.FormEvent<HTMLFormElement>) {
+  async function onUpload(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const file = fileRef.current?.files?.[0];
     if (!file) return;
     setBusy(true);
     setErr("");
-    const fd = new FormData();
-    fd.append("file", file);
-    fd.append("category", category);
-    const res = await fetch("/api/hub/documents", { method: "POST", body: fd }).catch(() => null);
-    setBusy(false);
-    if (res?.ok) {
+    setProgress(0);
+    try {
+      // 1) Stream the file straight to Blob (multipart for large files) — never
+      //    touches the 4.5MB serverless body cap.
+      const blob = await upload(file.name, file, {
+        access: "public",
+        handleUploadUrl: "/api/documents-upload",
+        clientPayload: category,
+        onUploadProgress: (p) => setProgress(Math.round(p.percentage)),
+      });
+      // 2) Record the metadata row (tiny JSON POST, behind hub auth).
+      const res = await fetch("/api/hub/documents", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: file.name, category, url: blob.url, size: file.size }),
+      });
+      if (!res.ok) throw new Error("record failed");
       if (fileRef.current) fileRef.current.value = "";
       router.refresh();
-    } else {
+    } catch {
       setErr("Upload failed. Try again.");
+    } finally {
+      setBusy(false);
+      setProgress(0);
     }
   }
 
@@ -59,18 +75,18 @@ export function DocumentsBoard({ docs }: { docs: DocRecord[] }) {
     <div className="space-y-8">
       <h1 className="display text-2xl text-[var(--color-anchor)]">Documents</h1>
 
-      <form onSubmit={upload} className="flex flex-wrap items-center gap-3 rounded-xl border border-[var(--color-sand)] bg-[var(--color-sand)]/20 p-5">
+      <form onSubmit={onUpload} className="flex flex-wrap items-center gap-3 rounded-xl border border-[var(--color-sand)] bg-[var(--color-sand)]/20 p-5">
         <input ref={fileRef} type="file" required className="text-sm" />
         <select value={category} onChange={(e) => setCategory(e.target.value)} className={field}>
           {DOC_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
         </select>
         <button type="submit" disabled={busy} className="rounded-full bg-[var(--color-accent)] px-5 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-ink)] disabled:opacity-60">
-          {busy ? "Uploading…" : "Upload"}
+          {busy ? (progress > 0 ? `Uploading… ${progress}%` : "Uploading…") : "Upload"}
         </button>
         {err && <span className="text-sm text-red-700">{err}</span>}
       </form>
 
-      <p className="text-sm text-[var(--color-muted)]">Design assets, floor plans, price sheets, brochures, reservation agreements, renderings — share with agents and buyers.</p>
+      <p className="text-sm text-[var(--color-muted)]">Plans, renderings, brand assets, agreements, media — up to 2&nbsp;GB per file. Share with agents and buyers.</p>
 
       {sections.length === 0 ? (
         <p className="text-sm text-[var(--color-muted)]">No documents yet.</p>

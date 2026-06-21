@@ -1,4 +1,14 @@
-export const DOC_CATEGORIES = ["Design Assets", "Floor Plans", "Price Sheets", "Brochures", "Agreements", "Renderings", "Other"];
+export const DOC_CATEGORIES = [
+  "Brand & Design",
+  "Renderings & Plans",
+  "Marketing & Sales",
+  "Strategy & Research",
+  "Pricing",
+  "Agreements",
+  "Legal & Governing",
+  "Media",
+  "Other",
+];
 
 export type DocRecord = {
   id: string;
