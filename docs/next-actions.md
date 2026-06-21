@@ -19,6 +19,7 @@ _Live list. Newest decisions at top._
 ### Hub follow-ups (next)
 - [x] **Source the agent database** — **338 real web-verified contacts** (139 emailable; 321 agents + 17 partners): Coastal Bend 166 · Houston 51 · Dallas 47 · Austin 42 · SA 32, incl. the Galati Yacht Sales marina partner + Kuper's Port A coastal arm. ✅ 2026-06-20
 - [x] **Interactive Sales tool** — search · multi-select checkboxes → broadcast-to-selected · type/market/status/tag/has-email filters · sort · summary chips · clickable tags. ✅ (commit `d316206`)
+- [x] **Brokerage organization** — Contacts | Brokerages view toggle + brokerage filter; rollup shows each firm's count/emailable/markets, drill-in. 74 brokerages. ✅ (commit `657f7b0`)
 - [ ] **Enrich the 199 without public email** — name + brokerage + market captured; many have phones
 - [x] **Backups** — automated daily cron (`/api/cron/backup`, `vercel.json`, gated on `CRON_SECRET`) snapshots all collections to `backups/`; + one-time off-Vercel local copy in `~/palms-backups/`. ✅ 2026-06-20
 - [x] **Scalable store** — consolidated to one object per collection (`collections/<c>.json`); reads **2.2s→0.44s**, cache-bust kills read-after-write lag, same interface (zero caller changes). ✅ 2026-06-20 (commit `0b59a69`)
