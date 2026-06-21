@@ -16,6 +16,8 @@ _Live list. Newest decisions at top._
 - [x] **Documents** — Blob file library (upload/categorize/download/delete). ✅
 - [x] **Marketing** — lead-source breakdown, public-site link, campaign tracker. ✅
 
+- [x] **Sales cleanup (concise)** — 492→475 unique contacts, 85→73 brokerages (collapsed Compass's 5 subgroup labels → 1, merged CBIR→CB Island Escapes, removed firm-placeholder rows, merged moved-firm dupes, normalized tags). `scripts/palms-cleanup.mjs`. ✅ 2026-06-21
+
 ### Hub follow-ups (next)
 - [x] **Source the agent database** — **338 real web-verified contacts** (139 emailable; 321 agents + 17 partners): Coastal Bend 166 · Houston 51 · Dallas 47 · Austin 42 · SA 32, incl. the Galati Yacht Sales marina partner + Kuper's Port A coastal arm. ✅ 2026-06-20
 - [x] **Interactive Sales tool** — search · multi-select checkboxes → broadcast-to-selected · type/market/status/tag/has-email filters · sort · summary chips · clickable tags. ✅ (commit `d316206`)
