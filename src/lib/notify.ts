@@ -1,14 +1,12 @@
 import "server-only";
+import { sendMail, emailReady } from "./email";
+import { SITE } from "./site";
 
 /**
- * New-lead alert — ENV-GATED, ships OFF.
- *
- * Email provider = GOOGLE WORKSPACE on thepalms.dev (decided 2026-06-20).
- * When Workspace is connected (a sender mailbox like alerts@thepalms.dev +
- * credentials), this sends the alert from a thepalms.dev address. The exact
- * transport — Gmail API (OAuth) vs Workspace SMTP — is finalized when the
- * Workspace is live. Until then this is a no-op: the lead is still stored and
- * visible in the hub. No borrowed creds, no third-party ESP.
+ * New-lead alert via GOOGLE WORKSPACE on thepalms.dev (SMTP, see ./email).
+ * No-op until WORKSPACE_SENDER_EMAIL + WORKSPACE_SMTP_PASSWORD + LEAD_ALERT_TO
+ * are set. A send failure never breaks lead capture — the lead is already
+ * stored and visible in the hub.
  */
 type NewLead = {
   id: string;
@@ -20,11 +18,24 @@ type NewLead = {
 
 export async function notifyNewLead(lead: NewLead): Promise<void> {
   const to = process.env.LEAD_ALERT_TO;
-  // Set once Google Workspace sending is wired (e.g. "alerts@thepalms.dev").
-  const workspaceReady = Boolean(process.env.WORKSPACE_SENDER_EMAIL);
-  if (!to || !workspaceReady) return; // off until Workspace is connected
+  if (!to || !emailReady()) return; // off until Workspace is connected
 
-  // TODO(workspace-send): deliver via Google Workspace (Gmail API or SMTP) from
-  // WORKSPACE_SENDER_EMAIL → `to`. Implemented when Workspace creds land.
-  console.info("[palms] lead alert queued for Workspace send", { id: lead.id, to });
+  const text = [
+    `New Founders' List inquiry — ${SITE.shortName}`,
+    "",
+    `Name:   ${lead.fullName}`,
+    `Email:  ${lead.email}`,
+    lead.phone ? `Phone:  ${lead.phone}` : null,
+    lead.notes ? `\nLooking for:\n${lead.notes}` : null,
+    "",
+    `Open in the hub → https://${SITE.opsDomain}/hub/leads`,
+  ]
+    .filter((l) => l !== null)
+    .join("\n");
+
+  try {
+    await sendMail({ to, replyTo: lead.email, subject: `New inquiry: ${lead.fullName}`, text });
+  } catch (err) {
+    console.error("[palms] lead alert send failed", err);
+  }
 }
