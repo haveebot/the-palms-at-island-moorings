@@ -23,6 +23,9 @@ function transport(): Transporter | null {
       host: "smtp.gmail.com",
       port: 465,
       secure: true,
+      pool: true, // reuse connections for broadcast fan-out
+      maxConnections: 5, // bound concurrency — stay friendly with Gmail
+      maxMessages: 100,
       auth: { user, pass },
     });
   }

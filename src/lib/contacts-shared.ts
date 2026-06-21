@@ -59,6 +59,8 @@ export type Broadcast = {
   segment: string; // human-readable segment description
   recipientCount: number;
   status: "draft" | "sent";
+  sentCount?: number;
+  failedCount?: number;
   createdAt: string;
   sentAt?: string;
 };
