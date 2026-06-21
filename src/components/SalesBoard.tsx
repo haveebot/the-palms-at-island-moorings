@@ -30,6 +30,7 @@ export function SalesBoard({ contacts, broadcasts }: { contacts: Contact[]; broa
   const [tag, setTag] = useState("");
   const [brokerage, setBrokerage] = useState("");
   const [emailOnly, setEmailOnly] = useState(false);
+  const [phoneOnly, setPhoneOnly] = useState(false);
   const [sort, setSort] = useState("name");
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
@@ -74,6 +75,7 @@ export function SalesBoard({ contacts, broadcasts }: { contacts: Contact[]; broa
       (!tag || (c.tags || []).includes(tag)) &&
       (!brokerage || c.company === brokerage) &&
       (!emailOnly || !!c.email) &&
+      (!phoneOnly || !!c.phone) &&
       (!q || c.fullName.toLowerCase().includes(q) || (c.company || "").toLowerCase().includes(q) || (c.email || "").toLowerCase().includes(q)),
     );
     const by: Record<string, (a: Contact, b: Contact) => number> = {
@@ -110,7 +112,7 @@ export function SalesBoard({ contacts, broadcasts }: { contacts: Contact[]; broa
     const allSel = ids.length > 0 && ids.every((id) => selected.has(id));
     setSelected((prev) => { const n = new Set(prev); ids.forEach((id) => (allSel ? n.delete(id) : n.add(id))); return n; });
   }
-  function clearFilters() { setSearch(""); setType(""); setMarket(""); setStatus(""); setTag(""); setBrokerage(""); setEmailOnly(false); }
+  function clearFilters() { setSearch(""); setType(""); setMarket(""); setStatus(""); setTag(""); setBrokerage(""); setEmailOnly(false); setPhoneOnly(false); }
   function drillIntoBrokerage(name: string) {
     clearFilters();
     setBrokerage(name === NO_FIRM ? "" : name);
@@ -216,6 +218,7 @@ export function SalesBoard({ contacts, broadcasts }: { contacts: Contact[]; broa
             <select value={status} onChange={(e) => setStatus(e.target.value)} className={field}><option value="">Any status</option>{CONTACT_STATUSES.map((s) => <option key={s.key} value={s.key}>{s.label}</option>)}</select>
             <select value={tag} onChange={(e) => setTag(e.target.value)} className={field}><option value="">Any tag</option>{allTags.map((t) => <option key={t} value={t}>{t}</option>)}</select>
             <label className="flex items-center gap-1.5 text-sm text-[var(--color-muted)]"><input type="checkbox" checked={emailOnly} onChange={(e) => setEmailOnly(e.target.checked)} /> has email</label>
+            <label className="flex items-center gap-1.5 text-sm text-[var(--color-muted)]"><input type="checkbox" checked={phoneOnly} onChange={(e) => setPhoneOnly(e.target.checked)} /> has phone</label>
             <select value={sort} onChange={(e) => setSort(e.target.value)} className={field}><option value="name">Sort: Name</option><option value="company">Brokerage</option><option value="market">Market</option><option value="recent">Recently added</option></select>
             <button onClick={clearFilters} className="text-xs uppercase tracking-[0.12em] text-[var(--color-muted)] hover:text-[var(--color-foreground)]">Clear</button>
             <span className="ml-auto text-sm font-medium text-[var(--color-anchor)]">{filtered.length} of {contacts.length}</span>
@@ -249,7 +252,9 @@ export function SalesBoard({ contacts, broadcasts }: { contacts: Contact[]; broa
                     <td className="py-3 pr-3"><input type="checkbox" checked={selected.has(c.id)} onChange={() => toggle(c.id)} /></td>
                     <td className="py-3 pr-4 font-medium">
                       {c.fullName}
-                      {c.email ? <div className="text-xs text-[var(--color-muted)]">{c.email}</div> : <div className="text-xs italic text-[var(--color-muted)]/60">no email</div>}
+                      {c.email && <div className="text-xs"><a href={`mailto:${c.email}`} className="text-[var(--color-muted)] hover:text-[var(--color-anchor)]">{c.email}</a></div>}
+                      {c.phone && <div className="text-xs"><a href={`tel:${c.phone}`} className="text-[var(--color-muted)] hover:text-[var(--color-anchor)]">{c.phone}</a></div>}
+                      {!c.email && !c.phone && <div className="text-xs italic text-[var(--color-muted)]/60">no contact info</div>}
                     </td>
                     <td className="py-3 pr-4 text-[var(--color-muted)]">{TYPE_LABEL[c.type]}</td>
                     <td className="py-3 pr-4">
