@@ -20,7 +20,11 @@ _Live list. Newest decisions at top._
 - [x] **Source the agent database** — **338 real web-verified contacts** (139 emailable; 321 agents + 17 partners): Coastal Bend 166 · Houston 51 · Dallas 47 · Austin 42 · SA 32, incl. the Galati Yacht Sales marina partner + Kuper's Port A coastal arm. ✅ 2026-06-20
 - [x] **Interactive Sales tool** — search · multi-select checkboxes → broadcast-to-selected · type/market/status/tag/has-email filters · sort · summary chips · clickable tags. ✅ (commit `d316206`)
 - [x] **Brokerage organization** — Contacts | Brokerages view toggle + brokerage filter; rollup shows each firm's count/emailable/markets, drill-in. 74 brokerages. ✅ (commit `657f7b0`)
-- [ ] **Enrich the 199 without public email** — name + brokerage + market captured; many have phones
+- [x] **Pulled blocked rosters** — +161 agents (KW Coastal Bend, Martha Turner Bay Area, RE/MAX/Coldwell/BHHS Corpus, gaps sweep) → **499 contacts / 86 brokerages**. ✅ 2026-06-21
+- [x] **Email enrichment (verified-only)** — +112 real emails → **305 emailable**. Kuper 6→35, Spears 2→15, KW 0→17, etc. ✅
+- [x] **"Email firm" action** — one-click per brokerage row (drills in + targets composer). ✅
+- [ ] **Recover captcha-walled emails (~194 remaining)** — HAR / RE/MAX / BHHS / Gary Greene publish emails but block bots; needs a logged-in **Chrome MCP** browser pass. Many small firms publish phone-only (genuinely no email).
+- [ ] **Fix agent-flagged data** — Julie Reupke = Compass; Dana Kisel = Phyllis Browning; "Natalia Muse"≈"Natasha Muse"; "Mark Rose"@Briggs unconfirmed.
 - [x] **Backups** — automated daily cron (`/api/cron/backup`, `vercel.json`, gated on `CRON_SECRET`) snapshots all collections to `backups/`; + one-time off-Vercel local copy in `~/palms-backups/`. ✅ 2026-06-20
 - [x] **Scalable store** — consolidated to one object per collection (`collections/<c>.json`); reads **2.2s→0.44s**, cache-bust kills read-after-write lag, same interface (zero caller changes). ✅ 2026-06-20 (commit `0b59a69`)
 - [ ] **Postgres/Neon (tier-2, only if multi-development platform)** — provisioning is ~90% API-scriptable (`POST /v1/storage/stores/integration`, plan `free_v3`) but gated on the interactive billing-authorization (1 dashboard click). Store interface is identical so the swap stays contained. Not needed at single-development scale.
