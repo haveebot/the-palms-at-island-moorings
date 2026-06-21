@@ -1,4 +1,4 @@
-export const DOC_CATEGORIES = ["Floor Plans", "Price Sheets", "Brochures", "Agreements", "Renderings", "Other"];
+export const DOC_CATEGORIES = ["Design Assets", "Floor Plans", "Price Sheets", "Brochures", "Agreements", "Renderings", "Other"];
 
 export type DocRecord = {
   id: string;
