@@ -1,13 +1,14 @@
 @import "tailwindcss";
 
 /*
- * The Palms at Island Moorings — PLACEHOLDER brand tokens.
+ * The Palms at Island Moorings — INTERIM brand tokens (Moodboard V1).
  *
- * ⚠️  DELIBERATE PLACEHOLDERS. Collie Farley / Farley Creative owns the real
- *     identity. The moment her brand lands, swap this whole @theme block.
- *     These values are tuned to read as "coastal luxury / waterfront" so the
- *     pre-sales shell looks intentional — not a default template — while
- *     staying obviously swappable. Do not treat any color/type here as final.
+ * ⚠️  Tuned to Collie Farley / Farley Creative's Concept Moodboard V1
+ *     (2026-06-21): warm cream + sand/taupe neutrals, a green family from
+ *     sage → emerald → pine → near-black, with brushed brass as the metallic
+ *     accent. Still INTERIM — the final locked brand kit (logo suite, exact
+ *     palette, type, guidelines) is Collie's, delivered the week of June 22.
+ *     Swap this whole @theme block when it lands. Nothing here is final.
  */
 @theme {
   /* Foundation (≈90% of surface) */
@@ -18,8 +19,8 @@
 
   /* Accents (used sparingly) */
   --color-brass: #B08A4F;   /* brushed brass — CTAs, fine rules, "the click color" */
-  --color-harbor: #2C3A5A;  /* deep marine blue — anchor, section headers (tonal twin of the prior teal #2E4A52) */
-  --color-palm: #5B6F52;    /* muted palm green — tertiary */
+  --color-harbor: #1C4A3B;  /* deep pine green — anchor, section headers (Moodboard V1; was navy #2C3A5A) */
+  --color-palm: #43705F;    /* emerald — tertiary, gradient depth */
 
   /* Semantic aliases */
   --color-foreground: var(--color-ink);

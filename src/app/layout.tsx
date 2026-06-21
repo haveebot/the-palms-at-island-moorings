@@ -12,11 +12,11 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: {
-    default: `${SITE.name} — Luxury Waterfront Residences`,
+    default: `${SITE.name} — The Last Homesites in Island Moorings`,
     template: `%s · ${SITE.shortName}`,
   },
   description:
-    "An exclusive collection of luxury waterfront residences at Island Moorings, Port Aransas. Register your interest for early, pre-sales access.",
+    "The final 21 marina-front homesites in Island Moorings — Port Aransas' original waterfront community, established 1960. Join the Founders' List for first look, first pricing, and first choice.",
   applicationName: SITE.name,
   keywords: [
     "Island Moorings",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: SITE.name,
     description:
-      "Luxury waterfront residences at Island Moorings, Port Aransas. Register your interest.",
+      "The final 21 marina-front homesites in Island Moorings, Port Aransas. Join the Founders' List.",
     url: SITE.url,
     siteName: SITE.name,
     type: "website",
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: SITE.name,
-    description: "Luxury waterfront residences at Island Moorings, Port Aransas.",
+    description: "The final 21 marina-front homesites in Island Moorings, Port Aransas.",
   },
   robots: {
     index: false,

@@ -43,9 +43,9 @@ export function RegisterInterestForm() {
   if (status === "success") {
     return (
       <div className="rounded-lg border border-[var(--color-accent)]/40 bg-[var(--color-sand)]/40 p-8 text-center">
-        <p className="display text-2xl text-[var(--color-anchor)]">Thank you.</p>
+        <p className="display text-2xl text-[var(--color-anchor)]">You&rsquo;re on the list.</p>
         <p className="mt-2 text-sm text-[var(--color-muted)]">
-          {`Your interest in ${SITE.name} has been registered. We'll be in touch with early access details.`}
+          {`Welcome to the Founders' List for ${SITE.name}. You'll be first to receive renderings, pricing, and reservation details.`}
         </p>
       </div>
     );
@@ -102,7 +102,7 @@ export function RegisterInterestForm() {
         disabled={status === "submitting"}
         className="w-full rounded-full bg-[var(--color-accent)] px-6 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-ink)] transition hover:opacity-90 disabled:opacity-60 sm:w-auto"
       >
-        {status === "submitting" ? "Submitting…" : "Register Interest"}
+        {status === "submitting" ? "Submitting…" : "Join the Founders’ List"}
       </button>
     </form>
   );

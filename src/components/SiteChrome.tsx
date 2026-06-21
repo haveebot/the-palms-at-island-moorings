@@ -10,7 +10,7 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-[var(--color-sand)]/70 bg-[var(--color-shell)]/85 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <Link href="/" className="display text-lg tracking-wide text-[var(--color-anchor)]">
+        <Link href="/" className="display text-lg uppercase tracking-[0.08em] text-[var(--color-anchor)]">
           THE&nbsp;PALMS
           <span className="ml-2 hidden text-[0.6rem] uppercase tracking-[0.25em] text-[var(--color-muted)] sm:inline">
             Island Moorings
@@ -18,7 +18,7 @@ export function SiteHeader() {
         </Link>
         <nav className="flex items-center gap-6 text-sm">
           <Link href="/#residences" className="hidden text-[var(--color-muted)] hover:text-[var(--color-foreground)] sm:inline">
-            Residences
+            Homesites
           </Link>
           <Link href="/#location" className="hidden text-[var(--color-muted)] hover:text-[var(--color-foreground)] sm:inline">
             Location
@@ -27,7 +27,7 @@ export function SiteHeader() {
             href="/register"
             className="rounded-full bg-[var(--color-accent)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-ink)] transition hover:opacity-90"
           >
-            Register Interest
+            Founders&rsquo; List
           </Link>
         </nav>
       </div>
@@ -54,7 +54,7 @@ export function SiteFooter() {
         <div className="flex flex-col gap-2 text-xs text-[var(--color-muted)] sm:flex-row sm:justify-between">
           <p>© {SITE.name}. All rights reserved.</p>
           {/* Internal marker — remove at public launch */}
-          <p className="opacity-70">Pre-sales preview · scaffold (content pending Farley Creative)</p>
+          <p className="opacity-70">Pre-sales preview · interim brand (Moodboard V1) · final kit pending Farley Creative</p>
         </div>
       </div>
     </footer>

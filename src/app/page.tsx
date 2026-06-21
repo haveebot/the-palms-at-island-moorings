@@ -1,11 +1,22 @@
 import Link from "next/link";
 import { SITE } from "@/lib/site";
-import { RESIDENCES } from "@/lib/residences";
 import { Reveal } from "@/components/Reveal";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { RegisterInterestForm } from "@/components/RegisterInterestForm";
 
+/*
+ * Homepage copy is INTERIM — facts are public + non-fabricated (21 homesites,
+ * 5,000–10,000 sq ft, Island Moorings est. 1960, 245-slip marina & yacht club),
+ * drawn from Farley Creative's brief. The final brand VOICE, logo, and imagery
+ * are Collie's, landing the week of June 22. No prices/comps/tactics (internal).
+ */
 export default function Home() {
+  const facts = [
+    { stat: "21", label: "Marina-front homesites", note: "A single, limited release" },
+    { stat: "5,000–10,000", label: "Square feet per homesite", note: "Room to build the legacy" },
+    { stat: "1960", label: "Island Moorings, established", note: "Port Aransas' original marina community" },
+  ];
+
   return (
     <>
       <SiteHeader />
@@ -22,86 +33,81 @@ export default function Home() {
         />
         <div className="relative mx-auto flex min-h-[78vh] max-w-6xl flex-col justify-center px-6 py-24 text-[var(--color-shell)]">
           <p className="eyebrow animate-fade-in !text-[var(--color-sand)]">{SITE.location}</p>
-          <h1 className="display animate-fade-in mt-4 text-5xl leading-[1.02] sm:text-7xl">
+          <h1 className="display animate-fade-in mt-4 text-5xl uppercase leading-[1.02] tracking-[0.02em] sm:text-7xl">
             The Palms
-            <span className="block text-2xl font-light tracking-wide text-[var(--color-sand)] sm:text-3xl">
+            <span className="block text-2xl font-light uppercase tracking-[0.22em] text-[var(--color-sand)] sm:text-3xl">
               at Island Moorings
             </span>
           </h1>
           <p className="animate-fade-in-delayed mt-6 max-w-xl text-lg text-[var(--color-fog)]">
-            An exclusive collection of luxury waterfront residences on the Texas
-            coast. Now reserving for pre-sales.
+            The final 21 homesites in Island Moorings — Port Aransas&rsquo;
+            original marina community, on the water since 1960. The Founders&rsquo;
+            List is now forming.
           </p>
           <div className="animate-fade-in-delayed mt-10 flex flex-wrap gap-4">
             <Link
               href="/register"
               className="rounded-full bg-[var(--color-accent)] px-7 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-ink)] transition hover:opacity-90"
             >
-              Register Interest
+              Join the Founders&rsquo; List
             </Link>
             <Link
               href="#residences"
               className="rounded-full border border-[var(--color-sand)]/50 px-7 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-shell)] transition hover:bg-white/10"
             >
-              View Residences
+              The Homesites
             </Link>
           </div>
         </div>
       </section>
 
-      {/* VISION — high-level placeholder copy (honest; pending Collie's creative) */}
+      {/* VISION — the legacy / last-parcel story (public facts, high-level) */}
       <section className="mx-auto max-w-3xl px-6 py-24 text-center">
         <Reveal>
           <p className="eyebrow">The Development</p>
           <h2 className="display mt-4 text-3xl text-[var(--color-anchor)] sm:text-4xl">
-            Waterfront living, reimagined at the marina&rsquo;s edge.
+            The last legacy parcel in Island Moorings.
           </h2>
           <p className="mx-auto mt-6 max-w-2xl text-[var(--color-muted)]">
-            The Palms brings a limited collection of luxury homes to one of Port
-            Aransas&rsquo; most protected waterfront settings. Full details — plans,
-            finishes, and pricing — are being finalized. Register your interest to
-            be among the first to receive them.
+            Island Moorings was planned in 1960 as Port Aransas&rsquo; original
+            waterfront community — homes built around a private, wind-protected
+            marina and yacht club. The Palms is its final undeveloped parcel: a
+            limited release of marina-front homesites. Renderings and reservation
+            details are being finalized — join the Founders&rsquo; List to be first.
           </p>
         </Reveal>
       </section>
 
-      {/* RESIDENCES — placeholder grid, clearly "coming soon" */}
+      {/* THE OFFERING — real, public product facts (no fabrication) */}
       <section id="residences" className="bg-[var(--color-sand)]/35 py-24">
         <div className="mx-auto max-w-6xl px-6">
           <Reveal>
-            <p className="eyebrow">The Residences</p>
+            <p className="eyebrow">The Offering</p>
             <h2 className="display mt-4 text-3xl text-[var(--color-anchor)] sm:text-4xl">
-              A limited collection.
+              Twenty-one homesites. One legacy address.
             </h2>
           </Reveal>
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {RESIDENCES.map((r, i) => (
-              <Reveal as="article" key={r.slug} delay={i * 90}>
-                <div className="group h-full overflow-hidden rounded-lg border border-[var(--color-sand)] bg-[var(--color-shell)]">
-                  {/* Placeholder image area — swap for residence render/photo */}
-                  <div
-                    className="aspect-[4/3] w-full"
-                    style={{
-                      background:
-                        "linear-gradient(135deg, var(--color-fog), var(--color-sand))",
-                    }}
-                    aria-hidden="true"
-                  />
-                  <div className="p-6">
-                    <h3 className="display text-xl text-[var(--color-anchor)]">{r.name}</h3>
-                    <p className="mt-1 text-sm text-[var(--color-muted)]">{r.summary}</p>
-                    <span className="mt-4 inline-block text-[0.65rem] uppercase tracking-[0.2em] text-[var(--color-accent)]">
-                      Coming soon
-                    </span>
-                  </div>
+          <div className="mt-12 grid gap-6 sm:grid-cols-3">
+            {facts.map((f, i) => (
+              <Reveal as="article" key={f.label} delay={i * 90}>
+                <div className="h-full rounded-lg border border-[var(--color-sand)] bg-[var(--color-shell)] p-8">
+                  <p className="display text-4xl text-[var(--color-anchor)] sm:text-5xl">{f.stat}</p>
+                  <p className="mt-3 text-sm font-medium text-[var(--color-foreground)]">{f.label}</p>
+                  <p className="mt-1 text-sm text-[var(--color-muted)]">{f.note}</p>
                 </div>
               </Reveal>
             ))}
           </div>
+          <Reveal>
+            <p className="mt-10 max-w-2xl text-sm text-[var(--color-muted)]">
+              Architectural renderings and homesite plans are in production with
+              Farley Creative. Founders&rsquo; List members see them first.
+            </p>
+          </Reveal>
         </div>
       </section>
 
-      {/* LOCATION — Island Moorings (public facts, high-level) */}
+      {/* LOCATION — Island Moorings marina (public facts) */}
       <section id="location" className="mx-auto max-w-6xl px-6 py-24">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <Reveal>
@@ -110,10 +116,10 @@ export default function Home() {
               Island Moorings, Port Aransas.
             </h2>
             <p className="mt-6 text-[var(--color-muted)]">
-              Set along Port Aransas&rsquo; private, wind-protected Island Moorings
-              marina — minutes from the Gulf, the golf course, and the heart of a
-              town built on the water. A rare waterfront setting for a home that
-              lives like a retreat.
+              Set along the private Island Moorings Marina &amp; Yacht Club — a
+              wind-protected, 245-slip harbor with a fast run to the Ship Channel
+              and the Gulf. Minutes from the beach, the golf course, and the heart
+              of a town built on the water. Your boat in your backyard.
             </p>
           </Reveal>
           <Reveal delay={120}>
@@ -130,14 +136,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* REGISTER — inline capture */}
+      {/* FOUNDERS' LIST — inline capture */}
       <section id="register" className="bg-[var(--color-ink)] py-24 text-[var(--color-shell)]">
         <div className="mx-auto max-w-3xl px-6">
           <Reveal>
-            <p className="eyebrow !text-[var(--color-sand)]">Pre-Sales</p>
-            <h2 className="display mt-4 text-3xl sm:text-4xl">Register your interest.</h2>
+            <p className="eyebrow !text-[var(--color-sand)]">The Founders&rsquo; List</p>
+            <h2 className="display mt-4 text-3xl sm:text-4xl">First look. First pricing. First choice.</h2>
             <p className="mt-4 text-[var(--color-fog)]">
-              Be first to receive plans, pricing, and reservation details for {SITE.shortName}.
+              The Founders&rsquo; List is the first to see renderings, the first to
+              reserve, and the first to choose a homesite at {SITE.shortName}.
             </p>
           </Reveal>
           <div className="mt-10 rounded-xl bg-[var(--color-shell)] p-6 text-[var(--color-foreground)] sm:p-8">
