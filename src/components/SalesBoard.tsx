@@ -117,6 +117,10 @@ export function SalesBoard({ contacts, broadcasts }: { contacts: Contact[]; broa
     setSelected(new Set());
     setView("contacts");
   }
+  function emailFirm(name: string) {
+    drillIntoBrokerage(name);
+    setTimeout(() => document.getElementById("broadcast")?.scrollIntoView({ behavior: "smooth", block: "center" }), 120);
+  }
 
   const field = "rounded-md border border-[var(--color-sand)] bg-white/70 px-3 py-2 text-sm outline-none focus:border-[var(--color-accent)]";
 
@@ -192,7 +196,10 @@ export function SalesBoard({ contacts, broadcasts }: { contacts: Contact[]; broa
                   <td className="py-3 pr-4"><span className="font-semibold text-[var(--color-anchor)]">{b.count}</span></td>
                   <td className="py-3 pr-4 text-[var(--color-muted)]">{b.emailable}</td>
                   <td className="py-3 pr-4 text-[var(--color-muted)]">{b.markets.sort().join(", ") || "—"}</td>
-                  <td className="py-3 text-right"><button onClick={() => drillIntoBrokerage(b.name)} className="text-xs uppercase tracking-[0.12em] text-[var(--color-accent)]">View →</button></td>
+                  <td className="py-3 text-right">
+                    <button onClick={() => emailFirm(b.name)} disabled={b.emailable === 0} className="mr-3 rounded-full bg-[var(--color-accent)] px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.1em] text-[var(--color-ink)] disabled:opacity-40" title={b.emailable ? `Email ${b.emailable} at ${b.name}` : "No emails on file"}>Email {b.emailable}</button>
+                    <button onClick={() => drillIntoBrokerage(b.name)} className="text-xs uppercase tracking-[0.12em] text-[var(--color-accent)]">View →</button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -302,7 +309,7 @@ function Composer({ segmentLabel, recipientCount, totalInTarget, busy, onSent }:
   const field = "w-full rounded-md border border-[var(--color-sand)] bg-white/70 px-3 py-2 text-sm outline-none focus:border-[var(--color-accent)]";
 
   return (
-    <section className="rounded-xl border border-[var(--color-sand)] bg-[var(--color-sand)]/20 p-6">
+    <section id="broadcast" className="scroll-mt-20 rounded-xl border border-[var(--color-sand)] bg-[var(--color-sand)]/20 p-6">
       <h2 className="display text-lg text-[var(--color-anchor)]">Broadcast</h2>
       <p className="text-sm text-[var(--color-muted)]">To <span className="font-medium text-[var(--color-foreground)]">{segmentLabel}</span> — {recipientCount} emailable of {totalInTarget}.</p>
       <div className="mt-4 space-y-3">
