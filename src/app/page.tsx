@@ -77,7 +77,7 @@ export default function Home() {
       </section>
 
       {/* VISION — the legacy / last-parcel story (public facts, high-level) */}
-      <section className="bg-[#1b4f4c] py-24 text-center">
+      <section className="bg-[#1f352e] py-24 text-center">
         <div className="mx-auto max-w-3xl px-6">
           <Reveal>
             <p className="eyebrow !text-[var(--color-accent)]">The Development</p>
@@ -95,10 +95,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* THE OFFERING — Collie's designed composition (full-bleed banner) */}
-      <section id="residences" className="bg-[var(--color-ink)]">
+      {/* THE OFFERING — composition banner on desktop; bigger readable layout on mobile */}
+      <section id="residences" className="bg-[#0C0804]">
+        {/* Desktop (md+): Collie's designed composition with clickable CTA overlay */}
         <Reveal>
-          <div className="relative w-full">
+          <div className="relative hidden w-full md:block">
             <picture>
               <source srcSet="/brand/offering/offering-banner.webp" type="image/webp" />
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -108,7 +109,6 @@ export default function Home() {
                 className="block w-full"
               />
             </picture>
-            {/* clickable overlay on the baked-in "Join the Founders' List" button */}
             <Link
               href="/register"
               aria-label="Join the Founders' List"
@@ -117,6 +117,34 @@ export default function Home() {
             />
           </div>
         </Reveal>
+
+        {/* Mobile (<md): larger, stacked, readable — CTA dropped to the bottom */}
+        <div className="px-6 py-16 text-center text-[var(--color-shell)] md:hidden">
+          <Reveal>
+            <p className="eyebrow !text-[var(--color-accent)]">The Offering</p>
+            <h2 className="display mt-3 text-4xl leading-[1.06] text-[var(--color-shell)]">
+              Twenty-one homesites. One legacy address.
+            </h2>
+            <div className="mt-10 space-y-8">
+              <div>
+                <p className="display text-5xl text-[var(--color-accent)]">21</p>
+                <p className="mt-2 text-base font-medium">Marina-front homesites</p>
+                <p className="text-sm text-white/55">A single, limited release</p>
+              </div>
+              <div>
+                <p className="display text-5xl text-[var(--color-accent)]">5,000&ndash;10,000</p>
+                <p className="mt-2 text-base font-medium">Square feet per homesite</p>
+                <p className="text-sm text-white/55">Room to build the legacy</p>
+              </div>
+            </div>
+            <Link
+              href="/register"
+              className="mt-12 inline-block rounded-full bg-[var(--color-accent)] px-8 py-3.5 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-ink)] transition hover:opacity-90"
+            >
+              Join the Founders&rsquo; List
+            </Link>
+          </Reveal>
+        </div>
       </section>
 
       {/* LOCATION — Island Moorings marina (public facts) */}
