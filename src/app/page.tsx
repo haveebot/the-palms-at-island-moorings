@@ -59,7 +59,7 @@ export default function Home() {
             The final 21 homesites in Island Moorings — Port Aransas&rsquo; original
             marina community, on the water since 1960. The Founders&rsquo; List is now forming.
           </p>
-          <div className="hero-cta mt-9 flex flex-wrap items-center justify-center gap-4">
+          <div className="hero-cta mt-9 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link
               href="/register"
               className="rounded-full bg-[var(--color-accent)] px-7 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-ink)] transition hover:opacity-90"
