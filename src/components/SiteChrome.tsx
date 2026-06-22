@@ -58,10 +58,8 @@ export function SiteFooter() {
           </div>
         </div>
         <div className="hairline my-8" />
-        <div className="flex flex-col gap-2 text-xs text-[var(--color-muted)] sm:flex-row sm:justify-between">
+        <div className="text-xs text-[var(--color-muted)]">
           <p>© {SITE.name}. All rights reserved.</p>
-          {/* Internal marker — remove at public launch */}
-          <p className="opacity-70">Pre-sales preview · interim brand (Moodboard V1) · final kit pending Farley Creative</p>
         </div>
       </div>
     </footer>
