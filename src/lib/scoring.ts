@@ -9,10 +9,12 @@ import { MARKET_AFFLUENCE, marketNote, brokeragePrestige } from "./texas-wealth"
  */
 export type Priority = "priority" | "high" | "medium" | "standard";
 
+// Tiers tuned so Priority is a genuine FOCUS list (the elite — ultra-luxury +
+// feeder/local market + strong buyer-fit), not half the database.
 export const PRIORITY_TIERS: { key: Priority; label: string; min: number }[] = [
-  { key: "priority", label: "Priority", min: 55 },
-  { key: "high", label: "High", min: 38 },
-  { key: "medium", label: "Medium", min: 20 },
+  { key: "priority", label: "Priority", min: 72 },
+  { key: "high", label: "High", min: 52 },
+  { key: "medium", label: "Medium", min: 30 },
   { key: "standard", label: "Standard", min: 0 },
 ];
 
