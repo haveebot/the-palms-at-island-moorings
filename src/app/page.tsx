@@ -21,30 +21,51 @@ export default function Home() {
     <>
       <SiteHeader />
 
-      {/* HERO — placeholder gradient stands in for hero photography / renders */}
-      <section className="relative overflow-hidden">
+      {/* HERO — drone footage (0.56 over #1b4f4c) + white logo rising from blur */}
+      <section className="relative isolate flex min-h-[88vh] items-center justify-center overflow-hidden">
+        {/* base tint — #1b4f4c gradient (brass glow effect kept) */}
         <div
           className="absolute inset-0"
           style={{
             background:
-              "radial-gradient(1200px 600px at 70% -10%, rgba(176,138,79,0.35), transparent 60%), linear-gradient(160deg, var(--color-harbor) 0%, var(--color-ink) 70%)",
+              "radial-gradient(1200px 600px at 70% -10%, rgba(176,138,79,0.28), transparent 60%), linear-gradient(160deg, #1b4f4c 0%, #102d2b 78%)",
           }}
           aria-hidden="true"
         />
-        <div className="relative mx-auto flex min-h-[78vh] max-w-6xl flex-col justify-center px-6 py-24 text-[var(--color-shell)]">
-          <p className="eyebrow animate-fade-in !text-[var(--color-sand)]">{SITE.location}</p>
-          <h1 className="display animate-fade-in mt-4 text-5xl uppercase leading-[1.02] tracking-[0.02em] sm:text-7xl">
-            The Palms
-            <span className="block text-2xl font-light uppercase tracking-[0.22em] text-[var(--color-sand)] sm:text-3xl">
-              at Island Moorings
-            </span>
-          </h1>
-          <p className="animate-fade-in-delayed mt-6 max-w-xl text-lg text-[var(--color-fog)]">
-            The final 21 homesites in Island Moorings — Port Aransas&rsquo;
-            original marina community, on the water since 1960. The Founders&rsquo;
-            List is now forming.
+        {/* drone loop at 56% — the #1b4f4c base shows through and tints it */}
+        <video
+          className="absolute inset-0 h-full w-full scale-[1.15] object-cover opacity-[0.56]"
+          autoPlay
+          muted
+          loop
+          playsInline
+          poster="/brand/hero/gulf-poster.jpg"
+          aria-hidden="true"
+        >
+          <source src="/brand/hero/gulf.webm" type="video/webm" />
+          <source src="/brand/hero/gulf.mp4" type="video/mp4" />
+        </video>
+        {/* gentle center darken so the white logo holds over moving water */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(58% 58% at 50% 50%, rgba(16,45,43,0.45), transparent 76%)",
+          }}
+          aria-hidden="true"
+        />
+        <div className="relative z-10 flex flex-col items-center px-6 text-center text-[var(--color-shell)]">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/brand/the-palms-logo-white.svg"
+            alt={SITE.name}
+            className="hero-logo w-[clamp(260px,46vw,560px)]"
+          />
+          <p className="hero-sub mt-9 max-w-xl text-base text-white/85 sm:text-lg">
+            The final 21 homesites in Island Moorings — Port Aransas&rsquo; original
+            marina community, on the water since 1960. The Founders&rsquo; List is now forming.
           </p>
-          <div className="animate-fade-in-delayed mt-10 flex flex-wrap gap-4">
+          <div className="hero-cta mt-9 flex flex-wrap items-center justify-center gap-4">
             <Link
               href="/register"
               className="rounded-full bg-[var(--color-accent)] px-7 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-ink)] transition hover:opacity-90"
@@ -53,7 +74,7 @@ export default function Home() {
             </Link>
             <Link
               href="#residences"
-              className="rounded-full border border-[var(--color-sand)]/50 px-7 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-shell)] transition hover:bg-white/10"
+              className="rounded-full border border-white/45 px-7 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white transition hover:bg-white/10"
             >
               The Homesites
             </Link>

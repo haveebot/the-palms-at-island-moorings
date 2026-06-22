@@ -77,6 +77,15 @@ html, body {
 .animate-fade-in { animation: fade-in 800ms ease-out both; }
 .animate-fade-in-delayed { animation: fade-in 800ms ease-out 220ms both; }
 
+/* Hero — white logo rises from blur once on load, then holds; sub + CTAs follow */
+@keyframes logo-rise {
+  0%   { opacity: 0; filter: blur(24px); transform: translateY(22px) scale(1.05); }
+  100% { opacity: 1; filter: blur(0);    transform: translateY(0) scale(1); }
+}
+.hero-logo { animation: logo-rise 2.4s cubic-bezier(0.16, 0.8, 0.3, 1) both; }
+.hero-sub  { animation: fade-in 900ms ease-out 1.9s both; }
+.hero-cta  { animation: fade-in 900ms ease-out 2.2s both; }
+
 /* Reveal — restrained scroll-into-view fade+translate */
 .reveal {
   opacity: 0;
@@ -88,6 +97,9 @@ html, body {
 
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-in,
-  .animate-fade-in-delayed { animation: none; }
+  .animate-fade-in-delayed,
+  .hero-sub,
+  .hero-cta { animation: none; }
+  .hero-logo { animation: none; opacity: 1; filter: none; transform: none; }
   .reveal { opacity: 1; transform: none; transition: none; }
 }
