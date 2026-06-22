@@ -16,9 +16,14 @@ ahead of her creative so it drops straight in.
 
 ## What to know before you change anything
 
-1. **It's an empty vessel.** Brand, copy, and images are placeholders. Don't
-   polish placeholder copy as if it's final, and don't invent property
-   specifics (home counts, sizes, prices, dates) — we don't have them yet.
+1. **Interim brand is applied — final kit pending.** Collie's Concept Moodboard
+   V1 direction is in as an INTERIM: green/brass/cream `@theme`, the "Join the
+   Founders' List" mechanic, and the real public facts from her brief (21
+   homesites · 5,000–10,000 sq ft · est. 1960 · 245-slip marina). When the
+   **final brand kit** (logo suite, locked palette, type, guidelines) lands,
+   swap the whole `@theme` block + `src/lib/site.ts`. Collie's 4 prelim PDFs
+   (moodboard, brief, roadmap, proposal) live in the hub → Documents →
+   **Brand & Design**. Don't invent property specifics beyond the brief.
 2. **Brand lives in two places only:** `src/lib/site.ts` (strings) and the
    `@theme` block in `src/app/globals.css` (color + type). Change brand there,
    nowhere else.
