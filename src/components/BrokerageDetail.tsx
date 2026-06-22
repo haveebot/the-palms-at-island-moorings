@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { BROKERAGE_STAGES, type BrokerageMeta } from "@/lib/brokerages-shared";
 import { CONTACT_TYPES, CONTACT_STATUSES, MARKETS, type Contact } from "@/lib/contacts-shared";
 import { scoreContact, tierBadgeClass } from "@/lib/scoring";
+import { BroadcastComposer } from "@/components/BroadcastComposer";
 
 const TYPE_LABEL: Record<string, string> = Object.fromEntries(CONTACT_TYPES.map((t) => [t.key, t.label]));
 const STAGE_LABEL: Record<string, string> = Object.fromEntries(BROKERAGE_STAGES.map((s) => [s.key, s.label]));
@@ -32,6 +33,10 @@ export function BrokerageDetail({
   const [notes, setNotes] = useState(meta?.notes || "");
   const [tags, setTags] = useState((meta?.tags || []).join(", "));
   const [savedMsg, setSavedMsg] = useState("");
+  const [sel, setSel] = useState<Set<string>>(new Set());
+  const [composeOpen, setComposeOpen] = useState(false);
+  const [composeTargets, setComposeTargets] = useState<Contact[]>([]);
+  const [composeLabel, setComposeLabel] = useState("");
 
   const markets = [...new Set(agents.map((a) => a.market).filter(Boolean))].sort();
   const emailable = agents.filter((a) => a.email).length;
@@ -66,6 +71,15 @@ export function BrokerageDetail({
     setAdding(false);
   }
 
+  function toggleSel(id: string) {
+    setSel((p) => { const n = new Set(p); n.has(id) ? n.delete(id) : n.add(id); return n; });
+  }
+  function openCompose(targets: Contact[], lbl: string) {
+    setComposeTargets(targets);
+    setComposeLabel(lbl);
+    setComposeOpen(true);
+  }
+
   return (
     <div className="space-y-6">
       <Link href="/hub/sales" className="text-xs uppercase tracking-[0.15em] text-[var(--color-muted)] hover:text-[var(--color-foreground)]">← Sales</Link>
@@ -78,12 +92,13 @@ export function BrokerageDetail({
             {agents.length} agents · {emailable} emailable · {priorityCount} priority · {markets.join(", ") || "—"}
           </p>
         </div>
-        <Link
-          href={`/hub/sales?brokerage=${encodeURIComponent(name)}`}
-          className={`rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] ${emailable && canSend ? "bg-[var(--color-accent)] text-[var(--color-ink)]" : "border border-[var(--color-sand)] text-[var(--color-muted)]"}`}
+        <button
+          onClick={() => openCompose(agents, name)}
+          disabled={emailable === 0}
+          className={`rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] disabled:opacity-40 ${emailable ? "bg-[var(--color-accent)] text-[var(--color-ink)]" : "border border-[var(--color-sand)] text-[var(--color-muted)]"}`}
         >
           Email this firm ({emailable})
-        </Link>
+        </button>
       </div>
 
       {/* Firm-level manage panel */}
@@ -122,6 +137,14 @@ export function BrokerageDetail({
         <button onClick={() => setAdding((v) => !v)} className="rounded-full bg-[var(--color-accent)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-ink)]">{adding ? "Cancel" : "+ Add agent"}</button>
       </div>
 
+      {sel.size > 0 && (
+        <div className="flex items-center gap-3 rounded-xl bg-[var(--color-anchor)] px-4 py-2 text-sm text-[var(--color-shell)]">
+          <span className="font-medium">{sel.size} selected</span>
+          <button onClick={() => setSel(new Set())} className="text-xs uppercase tracking-wide text-[var(--color-sand)] hover:text-white">Clear</button>
+          <button onClick={() => openCompose(agents.filter((a) => sel.has(a.id)), `${name} · ${sel.size} selected`)} className="ml-auto rounded-full bg-[var(--color-accent)] px-4 py-1 text-xs font-semibold uppercase tracking-wide text-[var(--color-ink)]">Compose to selected →</button>
+        </div>
+      )}
+
       {adding && (
         <form onSubmit={onAddAgent} className="grid gap-3 rounded-xl border border-[var(--color-sand)] bg-[var(--color-sand)]/20 p-5 sm:grid-cols-2 lg:grid-cols-3">
           <select name="type" defaultValue="agent" className={field}>{CONTACT_TYPES.map((t) => <option key={t.key} value={t.key}>{t.label}</option>)}</select>
@@ -138,6 +161,7 @@ export function BrokerageDetail({
         <table className="w-full border-collapse text-sm">
           <thead>
             <tr className="border-b border-[var(--color-sand)] text-left text-xs uppercase tracking-wide text-[var(--color-muted)]">
+              <th className="py-2 pr-3"><input type="checkbox" checked={agents.length > 0 && agents.every((a) => sel.has(a.id))} onChange={() => setSel((s) => agents.every((a) => s.has(a.id)) ? new Set() : new Set(agents.map((a) => a.id)))} aria-label="Select all" /></th>
               <th className="py-2 pr-4 font-medium">Agent</th>
               <th className="py-2 pr-4 font-medium">Type</th>
               <th className="py-2 pr-4 font-medium">Market</th>
@@ -147,7 +171,8 @@ export function BrokerageDetail({
           </thead>
           <tbody>
             {agents.map((c) => (
-              <tr key={c.id} className="border-b border-[var(--color-sand)]/50">
+              <tr key={c.id} className={`border-b border-[var(--color-sand)]/50 ${sel.has(c.id) ? "bg-[var(--color-accent)]/10" : ""}`}>
+                <td className="py-3 pr-3"><input type="checkbox" checked={sel.has(c.id)} onChange={() => toggleSel(c.id)} /></td>
                 <td className="py-3 pr-4 font-medium">
                   <span className="flex flex-wrap items-center gap-2">
                     {c.fullName}
@@ -173,6 +198,8 @@ export function BrokerageDetail({
           </tbody>
         </table>
       </div>
+
+      <BroadcastComposer open={composeOpen} onClose={() => setComposeOpen(false)} targets={composeTargets} label={composeLabel} canSend={canSend} onSent={() => { setSel(new Set()); router.refresh(); }} />
     </div>
   );
 }
