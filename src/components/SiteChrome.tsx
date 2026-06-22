@@ -3,18 +3,20 @@ import { SITE } from "@/lib/site";
 
 /**
  * Header + footer chrome. Server component, CSS-only responsive (no client
- * state needed for the scaffold). Wordmark is a type-set placeholder until
- * Collie's logo lands in /public/brand.
+ * state needed for the scaffold). Logo: Collie's lockup SVG in /public/brand
+ * (plain <img> — Next's image optimizer rejects SVG; no ESLint in this repo).
  */
 export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-[var(--color-sand)]/70 bg-[var(--color-shell)]/85 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <Link href="/" className="display text-lg uppercase tracking-[0.08em] text-[var(--color-anchor)]">
-          THE&nbsp;PALMS
-          <span className="ml-2 hidden text-[0.6rem] uppercase tracking-[0.25em] text-[var(--color-muted)] sm:inline">
-            Island Moorings
-          </span>
+        <Link href="/" className="flex items-center" aria-label={SITE.name}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/brand/the-palms-logo.svg"
+            alt={SITE.name}
+            className="h-9 w-auto sm:h-11"
+          />
         </Link>
         <nav className="flex items-center gap-6 text-sm">
           <Link href="/#residences" className="hidden text-[var(--color-muted)] hover:text-[var(--color-foreground)] sm:inline">
@@ -41,8 +43,13 @@ export function SiteFooter() {
       <div className="mx-auto max-w-6xl px-6 py-12">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="display text-xl text-[var(--color-anchor)]">{SITE.name}</p>
-            <p className="mt-1 text-sm text-[var(--color-muted)]">{SITE.location}</p>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/brand/the-palms-logo.svg"
+              alt={SITE.name}
+              className="h-12 w-auto"
+            />
+            <p className="mt-3 text-sm text-[var(--color-muted)]">{SITE.location}</p>
           </div>
           <div className="text-sm text-[var(--color-muted)]">
             <a href={`mailto:${SITE.contactEmail}`} className="hover:text-[var(--color-foreground)]">
