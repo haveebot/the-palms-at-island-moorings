@@ -58,6 +58,7 @@ html, body {
   background: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-sans);
+  overflow-x: clip;
 }
 
 /* Eyebrow — small-caps tracked label used above section headers */

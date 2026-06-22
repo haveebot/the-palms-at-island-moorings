@@ -56,8 +56,8 @@ export function RegisterInterestForm() {
 
   return (
     <form onSubmit={onSubmit} className="space-y-4" noValidate>
-      {/* Honeypot — visually hidden, not announced to AT */}
-      <div className="absolute left-[-9999px]" aria-hidden="true">
+      {/* Honeypot — visually hidden (sr-only avoids the off-screen horizontal overflow) */}
+      <div className="sr-only" aria-hidden="true">
         <label>
           Company
           <input type="text" name="company" tabIndex={-1} autoComplete="off" />
