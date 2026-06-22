@@ -15,7 +15,7 @@ export function SiteHeader() {
           <img
             src="/brand/the-palms-logo.svg"
             alt={SITE.name}
-            className="h-9 w-auto sm:h-11"
+            className="h-12 w-auto sm:h-11"
           />
         </Link>
         <nav className="flex items-center gap-6 text-sm">

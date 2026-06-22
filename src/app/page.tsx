@@ -119,33 +119,26 @@ export default function Home() {
           </div>
         </Reveal>
 
-        {/* Mobile (<md): larger, stacked, readable — CTA dropped to the bottom */}
-        <div className="px-6 py-16 text-center text-[var(--color-shell)] md:hidden">
-          <Reveal>
-            <p className="eyebrow !text-[var(--color-accent)]">The Offering</p>
-            <h2 className="display mt-3 text-4xl leading-[1.06] text-[var(--color-shell)]">
-              Twenty-one homesites. One legacy address.
-            </h2>
-            <div className="mt-10 space-y-8">
-              <div>
-                <p className="display text-5xl text-[var(--color-accent)]">21</p>
-                <p className="mt-2 text-base font-medium">Marina-front homesites</p>
-                <p className="text-sm text-white/55">A single, limited release</p>
-              </div>
-              <div>
-                <p className="display text-5xl text-[var(--color-accent)]">5,000&ndash;10,000</p>
-                <p className="mt-2 text-base font-medium">Square feet per homesite</p>
-                <p className="text-sm text-white/55">Room to build the legacy</p>
-              </div>
-            </div>
+        {/* Mobile (<md): Collie's phone-tuned composition (renderings bg, stats, CTA) */}
+        <Reveal>
+          <div className="relative block w-full md:hidden">
+            <picture>
+              <source srcSet="/brand/offering/offering-mobile.webp" type="image/webp" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/brand/offering/offering-mobile.jpg"
+                alt="Twenty-one marina-front homesites, 5,000–10,000 sq ft — the only investment of its kind in Island Moorings"
+                className="block w-full"
+              />
+            </picture>
             <Link
               href="/register"
-              className="mt-12 inline-block rounded-full bg-[var(--color-accent)] px-8 py-3.5 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-ink)] transition hover:opacity-90"
-            >
-              Join the Founders&rsquo; List
-            </Link>
-          </Reveal>
-        </div>
+              aria-label="Join the Founders' List"
+              className="absolute"
+              style={{ left: "34%", top: "83%", width: "20%", height: "10%" }}
+            />
+          </div>
+        </Reveal>
       </section>
 
       {/* LOCATION — Island Moorings marina (public facts) */}
