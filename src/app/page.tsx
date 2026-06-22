@@ -48,7 +48,7 @@ export default function Home() {
           }}
           aria-hidden="true"
         />
-        <div className="relative z-10 flex flex-col items-center px-6 text-center text-[var(--color-shell)]">
+        <div className="relative z-10 mx-auto flex w-full max-w-xl flex-col items-center px-6 text-center text-[var(--color-shell)]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/brand/the-palms-logo-white.svg"
