@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   CONTACT_TYPES,
@@ -9,6 +10,7 @@ import {
   type Contact,
   type Broadcast,
 } from "@/lib/contacts-shared";
+import { brokerageSlug } from "@/lib/brokerages-shared";
 
 const TYPE_LABEL: Record<string, string> = Object.fromEntries(CONTACT_TYPES.map((t) => [t.key, t.label]));
 const STATUS_LABEL: Record<string, string> = Object.fromEntries(CONTACT_STATUSES.map((s) => [s.key, s.label]));
@@ -16,7 +18,7 @@ const NO_FIRM = "— Independent —";
 
 type Brokerage = { name: string; count: number; emailable: number; markets: string[]; types: Set<string> };
 
-export function SalesBoard({ contacts, broadcasts, canSend }: { contacts: Contact[]; broadcasts: Broadcast[]; canSend: boolean }) {
+export function SalesBoard({ contacts, broadcasts, canSend, initialBrokerage = "" }: { contacts: Contact[]; broadcasts: Broadcast[]; canSend: boolean; initialBrokerage?: string }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [adding, setAdding] = useState(false);
@@ -28,11 +30,19 @@ export function SalesBoard({ contacts, broadcasts, canSend }: { contacts: Contac
   const [market, setMarket] = useState("");
   const [status, setStatus] = useState("");
   const [tag, setTag] = useState("");
-  const [brokerage, setBrokerage] = useState("");
+  const [brokerage, setBrokerage] = useState(initialBrokerage);
   const [emailOnly, setEmailOnly] = useState(false);
   const [phoneOnly, setPhoneOnly] = useState(false);
   const [sort, setSort] = useState("name");
   const [selected, setSelected] = useState<Set<string>>(new Set());
+
+  // Landing from a brokerage page's "Email this firm" — pre-filter + scroll to composer.
+  useEffect(() => {
+    if (!initialBrokerage) return;
+    setView("contacts");
+    const t = setTimeout(() => document.getElementById("broadcast")?.scrollIntoView({ behavior: "smooth", block: "center" }), 150);
+    return () => clearTimeout(t);
+  }, [initialBrokerage]);
 
   const allTags = useMemo(() => {
     const s = new Set<string>();
@@ -179,7 +189,7 @@ export function SalesBoard({ contacts, broadcasts, canSend }: { contacts: Contac
       {view === "brokerages" ? (
         /* ============ BROKERAGES ROLLUP ============ */
         <div className="overflow-x-auto">
-          <p className="mb-3 text-sm text-[var(--color-muted)]">Your coverage organized by firm. Click a brokerage to see its agents.</p>
+          <p className="mb-3 text-sm text-[var(--color-muted)]">Your coverage organized by firm. Open a brokerage to manage its relationship + agents.</p>
           <table className="w-full border-collapse text-sm">
             <thead>
               <tr className="border-b border-[var(--color-sand)] text-left text-xs uppercase tracking-wide text-[var(--color-muted)]">
@@ -191,20 +201,28 @@ export function SalesBoard({ contacts, broadcasts, canSend }: { contacts: Contac
               </tr>
             </thead>
             <tbody>
-              {brokerageRollup.map((b) => (
+              {brokerageRollup.map((b) => {
+                const isReal = b.name !== NO_FIRM;
+                const href = `/hub/sales/brokerage/${brokerageSlug(b.name)}`;
+                return (
                 <tr key={b.name} className="border-b border-[var(--color-sand)]/50 hover:bg-[var(--color-sand)]/15">
                   <td className="py-3 pr-4 font-medium">
-                    <button onClick={() => drillIntoBrokerage(b.name)} className="hover:text-[var(--color-anchor)] hover:underline">{b.name}</button>
+                    {isReal
+                      ? <Link href={href} className="hover:text-[var(--color-anchor)] hover:underline">{b.name}</Link>
+                      : <button onClick={() => drillIntoBrokerage(b.name)} className="hover:text-[var(--color-anchor)] hover:underline">{b.name}</button>}
                   </td>
                   <td className="py-3 pr-4"><span className="font-semibold text-[var(--color-anchor)]">{b.count}</span></td>
                   <td className="py-3 pr-4 text-[var(--color-muted)]">{b.emailable}</td>
                   <td className="py-3 pr-4 text-[var(--color-muted)]">{b.markets.sort().join(", ") || "—"}</td>
                   <td className="py-3 text-right">
                     <button onClick={() => emailFirm(b.name)} disabled={b.emailable === 0} className="mr-3 rounded-full bg-[var(--color-accent)] px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.1em] text-[var(--color-ink)] disabled:opacity-40" title={b.emailable ? `Email ${b.emailable} at ${b.name}` : "No emails on file"}>Email {b.emailable}</button>
-                    <button onClick={() => drillIntoBrokerage(b.name)} className="text-xs uppercase tracking-[0.12em] text-[var(--color-accent)]">View →</button>
+                    {isReal
+                      ? <Link href={href} className="text-xs uppercase tracking-[0.12em] text-[var(--color-accent)]">Manage →</Link>
+                      : <button onClick={() => drillIntoBrokerage(b.name)} className="text-xs uppercase tracking-[0.12em] text-[var(--color-accent)]">View →</button>}
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -259,7 +277,7 @@ export function SalesBoard({ contacts, broadcasts, canSend }: { contacts: Contac
                     </td>
                     <td className="py-3 pr-4 text-[var(--color-muted)]">{TYPE_LABEL[c.type]}</td>
                     <td className="py-3 pr-4">
-                      {c.company ? <button onClick={() => setBrokerage(c.company!)} className="hover:text-[var(--color-anchor)] hover:underline" title="Filter to this brokerage">{c.company}</button> : "—"}
+                      {c.company ? <Link href={`/hub/sales/brokerage/${brokerageSlug(c.company)}`} className="hover:text-[var(--color-anchor)] hover:underline" title="Open brokerage page">{c.company}</Link> : "—"}
                     </td>
                     <td className="py-3 pr-4">{c.market || "—"}</td>
                     <td className="py-3 pr-4">
