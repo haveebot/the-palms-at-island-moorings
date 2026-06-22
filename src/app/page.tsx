@@ -11,12 +11,6 @@ import { RegisterInterestForm } from "@/components/RegisterInterestForm";
  * are Collie's, landing the week of June 22. No prices/comps/tactics (internal).
  */
 export default function Home() {
-  const facts = [
-    { stat: "21", label: "Marina-front homesites", note: "A single, limited release" },
-    { stat: "5,000–10,000", label: "Square feet per homesite", note: "Room to build the legacy" },
-    { stat: "1960", label: "Island Moorings, established", note: "Port Aransas' original marina community" },
-  ];
-
   return (
     <>
       <SiteHeader />
@@ -101,33 +95,28 @@ export default function Home() {
         </div>
       </section>
 
-      {/* THE OFFERING — real, public product facts (no fabrication) */}
-      <section id="residences" className="bg-[var(--color-sand)]/35 py-24">
-        <div className="mx-auto max-w-6xl px-6">
-          <Reveal>
-            <p className="eyebrow">The Offering</p>
-            <h2 className="display mt-4 text-3xl text-[var(--color-anchor)] sm:text-4xl">
-              Twenty-one homesites. One legacy address.
-            </h2>
-          </Reveal>
-          <div className="mt-12 grid gap-6 sm:grid-cols-3">
-            {facts.map((f, i) => (
-              <Reveal as="article" key={f.label} delay={i * 90}>
-                <div className="h-full rounded-lg border border-[var(--color-sand)] bg-[var(--color-shell)] p-8">
-                  <p className="display text-4xl text-[var(--color-anchor)] sm:text-5xl">{f.stat}</p>
-                  <p className="mt-3 text-sm font-medium text-[var(--color-foreground)]">{f.label}</p>
-                  <p className="mt-1 text-sm text-[var(--color-muted)]">{f.note}</p>
-                </div>
-              </Reveal>
-            ))}
+      {/* THE OFFERING — Collie's designed composition (full-bleed banner) */}
+      <section id="residences" className="bg-[var(--color-ink)]">
+        <Reveal>
+          <div className="relative w-full">
+            <picture>
+              <source srcSet="/brand/offering/offering-banner.webp" type="image/webp" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/brand/offering/offering-banner.jpg"
+                alt="Twenty-one marina-front homesites, 5,000–10,000 square feet — The Palms at Island Moorings"
+                className="block w-full"
+              />
+            </picture>
+            {/* clickable overlay on the baked-in "Join the Founders' List" button */}
+            <Link
+              href="/register"
+              aria-label="Join the Founders' List"
+              className="absolute"
+              style={{ left: "6%", top: "80%", width: "16.5%", height: "9.5%" }}
+            />
           </div>
-          <Reveal>
-            <p className="mt-10 max-w-2xl text-sm text-[var(--color-muted)]">
-              Architectural renderings and homesite plans are in production with
-              Farley Creative. Founders&rsquo; List members see them first.
-            </p>
-          </Reveal>
-        </div>
+        </Reveal>
       </section>
 
       {/* LOCATION — Island Moorings marina (public facts) */}
