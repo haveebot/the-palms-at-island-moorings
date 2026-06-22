@@ -11,6 +11,7 @@ import {
   type Broadcast,
 } from "@/lib/contacts-shared";
 import { brokerageSlug } from "@/lib/brokerages-shared";
+import { scoreContact, PRIORITY_TIERS, tierBadgeClass } from "@/lib/scoring";
 
 const TYPE_LABEL: Record<string, string> = Object.fromEntries(CONTACT_TYPES.map((t) => [t.key, t.label]));
 const STATUS_LABEL: Record<string, string> = Object.fromEntries(CONTACT_STATUSES.map((s) => [s.key, s.label]));
@@ -33,7 +34,8 @@ export function SalesBoard({ contacts, broadcasts, canSend, initialBrokerage = "
   const [brokerage, setBrokerage] = useState(initialBrokerage);
   const [emailOnly, setEmailOnly] = useState(false);
   const [phoneOnly, setPhoneOnly] = useState(false);
-  const [sort, setSort] = useState("name");
+  const [priorityTier, setPriorityTier] = useState("");
+  const [sort, setSort] = useState("priority");
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
   // Landing from a brokerage page's "Email this firm" — pre-filter + scroll to composer.
@@ -55,6 +57,9 @@ export function SalesBoard({ contacts, broadcasts, canSend, initialBrokerage = "
     [contacts],
   );
 
+  // Buyer-quality score per contact — the wealth-geography engine.
+  const scoreOf = useMemo(() => new Map(contacts.map((c) => [c.id, scoreContact(c)])), [contacts]);
+
   const brokerageRollup = useMemo(() => {
     const map = new Map<string, Brokerage>();
     for (const c of contacts) {
@@ -72,9 +77,10 @@ export function SalesBoard({ contacts, broadcasts, canSend, initialBrokerage = "
   const stats = useMemo(() => ({
     total: contacts.length,
     brokerages: allBrokerages.length,
+    priority: contacts.filter((c) => scoreOf.get(c.id)?.tier === "priority").length,
     agents: contacts.filter((c) => c.type === "agent").length,
     emailable: contacts.filter((c) => c.email).length,
-  }), [contacts, allBrokerages]);
+  }), [contacts, allBrokerages, scoreOf]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -84,6 +90,7 @@ export function SalesBoard({ contacts, broadcasts, canSend, initialBrokerage = "
       (!status || c.status === status) &&
       (!tag || (c.tags || []).includes(tag)) &&
       (!brokerage || c.company === brokerage) &&
+      (!priorityTier || scoreOf.get(c.id)?.tier === priorityTier) &&
       (!emailOnly || !!c.email) &&
       (!phoneOnly || !!c.phone) &&
       (!q || c.fullName.toLowerCase().includes(q) || (c.company || "").toLowerCase().includes(q) || (c.email || "").toLowerCase().includes(q)),
@@ -93,9 +100,10 @@ export function SalesBoard({ contacts, broadcasts, canSend, initialBrokerage = "
       company: (a, b) => (a.company || "").localeCompare(b.company || ""),
       market: (a, b) => (a.market || "").localeCompare(b.market || ""),
       recent: (a, b) => b.createdAt.localeCompare(a.createdAt),
+      priority: (a, b) => (scoreOf.get(b.id)?.score || 0) - (scoreOf.get(a.id)?.score || 0),
     };
-    return [...out].sort(by[sort] || by.name);
-  }, [contacts, search, type, market, status, tag, brokerage, emailOnly, sort]);
+    return [...out].sort(by[sort] || by.priority);
+  }, [contacts, search, type, market, status, tag, brokerage, priorityTier, emailOnly, phoneOnly, sort, scoreOf]);
 
   const targetContacts = selected.size > 0 ? contacts.filter((c) => selected.has(c.id)) : filtered;
   // Sendable = has email AND not opted out. This is what a broadcast actually reaches.
@@ -123,7 +131,7 @@ export function SalesBoard({ contacts, broadcasts, canSend, initialBrokerage = "
     const allSel = ids.length > 0 && ids.every((id) => selected.has(id));
     setSelected((prev) => { const n = new Set(prev); ids.forEach((id) => (allSel ? n.delete(id) : n.add(id))); return n; });
   }
-  function clearFilters() { setSearch(""); setType(""); setMarket(""); setStatus(""); setTag(""); setBrokerage(""); setEmailOnly(false); setPhoneOnly(false); }
+  function clearFilters() { setSearch(""); setType(""); setMarket(""); setStatus(""); setTag(""); setBrokerage(""); setPriorityTier(""); setEmailOnly(false); setPhoneOnly(false); }
   function drillIntoBrokerage(name: string) {
     clearFilters();
     setBrokerage(name === NO_FIRM ? "" : name);
@@ -168,6 +176,7 @@ export function SalesBoard({ contacts, broadcasts, canSend, initialBrokerage = "
 
       {/* Summary chips */}
       <div className="flex flex-wrap gap-2 text-sm">
+        <span className="rounded-full bg-[var(--color-accent)] px-3 py-1"><span className="font-semibold text-[var(--color-ink)]">{stats.priority}</span> <span className="text-[var(--color-ink)]/80">Priority</span></span>
         {[["Contacts", stats.total], ["Brokerages", stats.brokerages], ["Agents", stats.agents], ["Emailable", stats.emailable]].map(([l, n]) => (
           <span key={l as string} className="rounded-full border border-[var(--color-sand)] bg-white/50 px-3 py-1"><span className="font-semibold text-[var(--color-anchor)]">{n}</span> <span className="text-[var(--color-muted)]">{l}</span></span>
         ))}
@@ -236,9 +245,10 @@ export function SalesBoard({ contacts, broadcasts, canSend, initialBrokerage = "
             <select value={market} onChange={(e) => setMarket(e.target.value)} className={field}><option value="">All markets</option>{MARKETS.map((m) => <option key={m} value={m}>{m}</option>)}</select>
             <select value={status} onChange={(e) => setStatus(e.target.value)} className={field}><option value="">Any status</option>{CONTACT_STATUSES.map((s) => <option key={s.key} value={s.key}>{s.label}</option>)}</select>
             <select value={tag} onChange={(e) => setTag(e.target.value)} className={field}><option value="">Any tag</option>{allTags.map((t) => <option key={t} value={t}>{t}</option>)}</select>
+            <select value={priorityTier} onChange={(e) => setPriorityTier(e.target.value)} className={field}><option value="">Any priority</option>{PRIORITY_TIERS.map((t) => <option key={t.key} value={t.key}>{t.label}</option>)}</select>
             <label className="flex items-center gap-1.5 text-sm text-[var(--color-muted)]"><input type="checkbox" checked={emailOnly} onChange={(e) => setEmailOnly(e.target.checked)} /> has email</label>
             <label className="flex items-center gap-1.5 text-sm text-[var(--color-muted)]"><input type="checkbox" checked={phoneOnly} onChange={(e) => setPhoneOnly(e.target.checked)} /> has phone</label>
-            <select value={sort} onChange={(e) => setSort(e.target.value)} className={field}><option value="name">Sort: Name</option><option value="company">Brokerage</option><option value="market">Market</option><option value="recent">Recently added</option></select>
+            <select value={sort} onChange={(e) => setSort(e.target.value)} className={field}><option value="priority">Sort: Buyer priority</option><option value="name">Name</option><option value="company">Brokerage</option><option value="market">Market</option><option value="recent">Recently added</option></select>
             <button onClick={clearFilters} className="text-xs uppercase tracking-[0.12em] text-[var(--color-muted)] hover:text-[var(--color-foreground)]">Clear</button>
             <span className="ml-auto text-sm font-medium text-[var(--color-anchor)]">{filtered.length} of {contacts.length}</span>
           </div>
@@ -257,6 +267,7 @@ export function SalesBoard({ contacts, broadcasts, canSend, initialBrokerage = "
                 <tr className="border-b border-[var(--color-sand)] text-left text-xs uppercase tracking-wide text-[var(--color-muted)]">
                   <th className="py-2 pr-3"><input type="checkbox" checked={allVisibleSelected} onChange={toggleAll} aria-label="Select all" /></th>
                   <th className="py-2 pr-4 font-medium">Name</th>
+                  <th className="py-2 pr-4 font-medium">Priority</th>
                   <th className="py-2 pr-4 font-medium">Type</th>
                   <th className="py-2 pr-4 font-medium">Brokerage</th>
                   <th className="py-2 pr-4 font-medium">Market</th>
@@ -266,7 +277,7 @@ export function SalesBoard({ contacts, broadcasts, canSend, initialBrokerage = "
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((c) => (
+                {filtered.map((c) => { const s = scoreOf.get(c.id)!; return (
                   <tr key={c.id} className={`border-b border-[var(--color-sand)]/50 ${selected.has(c.id) ? "bg-[var(--color-accent)]/10" : ""}`}>
                     <td className="py-3 pr-3"><input type="checkbox" checked={selected.has(c.id)} onChange={() => toggle(c.id)} /></td>
                     <td className="py-3 pr-4 font-medium">
@@ -274,6 +285,9 @@ export function SalesBoard({ contacts, broadcasts, canSend, initialBrokerage = "
                       {c.email && <div className="text-xs"><a href={`mailto:${c.email}`} className="text-[var(--color-muted)] hover:text-[var(--color-anchor)]">{c.email}</a></div>}
                       {c.phone && <div className="text-xs"><a href={`tel:${c.phone}`} className="text-[var(--color-muted)] hover:text-[var(--color-anchor)]">{c.phone}</a></div>}
                       {!c.email && !c.phone && <div className="text-xs italic text-[var(--color-muted)]/60">no contact info</div>}
+                    </td>
+                    <td className="py-3 pr-4">
+                      <span className={`inline-block rounded-full px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide ${tierBadgeClass(s.tier)}`} title={s.reasons.join(" · ")}>{s.tierLabel} · {s.score}</span>
                     </td>
                     <td className="py-3 pr-4 text-[var(--color-muted)]">{TYPE_LABEL[c.type]}</td>
                     <td className="py-3 pr-4">
@@ -292,7 +306,7 @@ export function SalesBoard({ contacts, broadcasts, canSend, initialBrokerage = "
                     </td>
                     <td className="py-3 text-right"><button onClick={() => call(`/api/hub/contacts/${c.id}`, "DELETE")} disabled={busy} className="text-xs text-[var(--color-muted)] hover:text-red-700">Delete</button></td>
                   </tr>
-                ))}
+                ); })}
               </tbody>
             </table>
           </div>

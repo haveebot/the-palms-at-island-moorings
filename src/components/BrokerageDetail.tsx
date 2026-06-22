@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { BROKERAGE_STAGES, type BrokerageMeta } from "@/lib/brokerages-shared";
 import { CONTACT_TYPES, CONTACT_STATUSES, MARKETS, type Contact } from "@/lib/contacts-shared";
+import { scoreContact, tierBadgeClass } from "@/lib/scoring";
 
 const TYPE_LABEL: Record<string, string> = Object.fromEntries(CONTACT_TYPES.map((t) => [t.key, t.label]));
 const STAGE_LABEL: Record<string, string> = Object.fromEntries(BROKERAGE_STAGES.map((s) => [s.key, s.label]));
@@ -34,6 +35,7 @@ export function BrokerageDetail({
 
   const markets = [...new Set(agents.map((a) => a.market).filter(Boolean))].sort();
   const emailable = agents.filter((a) => a.email).length;
+  const priorityCount = agents.filter((a) => scoreContact(a).tier === "priority").length;
   const field = "rounded-md border border-[var(--color-sand)] bg-white/70 px-3 py-2 text-sm outline-none focus:border-[var(--color-accent)]";
   const label = "mb-1 block text-xs uppercase tracking-[0.12em] text-[var(--color-muted)]";
 
@@ -73,7 +75,7 @@ export function BrokerageDetail({
           <p className="eyebrow">Brokerage</p>
           <h1 className="display mt-1 text-2xl text-[var(--color-anchor)]">{name}</h1>
           <p className="mt-1 text-sm text-[var(--color-muted)]">
-            {agents.length} agents · {emailable} emailable · {markets.join(", ") || "—"}
+            {agents.length} agents · {emailable} emailable · {priorityCount} priority · {markets.join(", ") || "—"}
           </p>
         </div>
         <Link
@@ -147,8 +149,9 @@ export function BrokerageDetail({
             {agents.map((c) => (
               <tr key={c.id} className="border-b border-[var(--color-sand)]/50">
                 <td className="py-3 pr-4 font-medium">
-                  <span className="flex items-center gap-2">
+                  <span className="flex flex-wrap items-center gap-2">
                     {c.fullName}
+                    {(() => { const s = scoreContact(c); return <span className={`rounded-full px-2 py-0.5 text-[0.55rem] font-semibold uppercase tracking-wide ${tierBadgeClass(s.tier)}`} title={s.reasons.join(" · ")}>{s.tierLabel} · {s.score}</span>; })()}
                     {c.id === meta?.primaryContactId && <span className="rounded-full bg-[var(--color-accent)] px-2 py-0.5 text-[0.55rem] font-semibold uppercase tracking-wide text-[var(--color-ink)]">Primary</span>}
                   </span>
                   {c.email && <div className="text-xs"><a href={`mailto:${c.email}`} className="text-[var(--color-muted)] hover:text-[var(--color-anchor)]">{c.email}</a></div>}
