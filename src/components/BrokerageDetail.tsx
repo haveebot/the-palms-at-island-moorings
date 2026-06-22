@@ -7,6 +7,7 @@ import { BROKERAGE_STAGES, type BrokerageMeta } from "@/lib/brokerages-shared";
 import { CONTACT_TYPES, CONTACT_STATUSES, MARKETS, type Contact } from "@/lib/contacts-shared";
 import { scoreContact, tierBadgeClass } from "@/lib/scoring";
 import { BroadcastComposer } from "@/components/BroadcastComposer";
+import { CopyEmailsButton } from "@/components/CopyEmailsButton";
 
 const TYPE_LABEL: Record<string, string> = Object.fromEntries(CONTACT_TYPES.map((t) => [t.key, t.label]));
 const STAGE_LABEL: Record<string, string> = Object.fromEntries(BROKERAGE_STAGES.map((s) => [s.key, s.label]));
@@ -92,13 +93,16 @@ export function BrokerageDetail({
             {agents.length} agents · {emailable} emailable · {priorityCount} priority · {markets.join(", ") || "—"}
           </p>
         </div>
-        <button
-          onClick={() => openCompose(agents, name)}
-          disabled={emailable === 0}
-          className={`rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] disabled:opacity-40 ${emailable ? "bg-[var(--color-accent)] text-[var(--color-ink)]" : "border border-[var(--color-sand)] text-[var(--color-muted)]"}`}
-        >
-          Email this firm ({emailable})
-        </button>
+        <div className="flex items-center gap-2">
+          <CopyEmailsButton emails={agents.filter((a) => a.email && a.status !== "do-not-contact").map((a) => a.email!)} />
+          <button
+            onClick={() => openCompose(agents, name)}
+            disabled={emailable === 0}
+            className={`rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] disabled:opacity-40 ${emailable ? "bg-[var(--color-accent)] text-[var(--color-ink)]" : "border border-[var(--color-sand)] text-[var(--color-muted)]"}`}
+          >
+            Email this firm ({emailable})
+          </button>
+        </div>
       </div>
 
       {/* Firm-level manage panel */}
@@ -141,7 +145,10 @@ export function BrokerageDetail({
         <div className="flex items-center gap-3 rounded-xl bg-[var(--color-anchor)] px-4 py-2 text-sm text-[var(--color-shell)]">
           <span className="font-medium">{sel.size} selected</span>
           <button onClick={() => setSel(new Set())} className="text-xs uppercase tracking-wide text-[var(--color-sand)] hover:text-white">Clear</button>
-          <button onClick={() => openCompose(agents.filter((a) => sel.has(a.id)), `${name} · ${sel.size} selected`)} className="ml-auto rounded-full bg-[var(--color-accent)] px-4 py-1 text-xs font-semibold uppercase tracking-wide text-[var(--color-ink)]">Compose to selected →</button>
+          <div className="ml-auto flex items-center gap-2">
+            <CopyEmailsButton emails={agents.filter((a) => sel.has(a.id) && a.email && a.status !== "do-not-contact").map((a) => a.email!)} className="rounded-full border border-[var(--color-sand)]/50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[var(--color-sand)] transition hover:text-white disabled:opacity-40" />
+            <button onClick={() => openCompose(agents.filter((a) => sel.has(a.id)), `${name} · ${sel.size} selected`)} className="rounded-full bg-[var(--color-accent)] px-4 py-1 text-xs font-semibold uppercase tracking-wide text-[var(--color-ink)]">Compose to selected →</button>
+          </div>
         </div>
       )}
 

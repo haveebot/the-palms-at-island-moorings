@@ -13,6 +13,7 @@ import {
 import { brokerageSlug } from "@/lib/brokerages-shared";
 import { scoreContact, PRIORITY_TIERS, tierBadgeClass } from "@/lib/scoring";
 import { BroadcastComposer } from "@/components/BroadcastComposer";
+import { CopyEmailsButton } from "@/components/CopyEmailsButton";
 
 const TYPE_LABEL: Record<string, string> = Object.fromEntries(CONTACT_TYPES.map((t) => [t.key, t.label]));
 const STATUS_LABEL: Record<string, string> = Object.fromEntries(CONTACT_STATUSES.map((s) => [s.key, s.label]));
@@ -245,14 +246,20 @@ export function SalesBoard({ contacts, broadcasts, canSend, initialBrokerage = "
             <select value={sort} onChange={(e) => setSort(e.target.value)} className={field}><option value="priority">Sort: Buyer priority</option><option value="name">Name</option><option value="company">Brokerage</option><option value="market">Market</option><option value="recent">Recently added</option></select>
             <button onClick={clearFilters} className="text-xs uppercase tracking-[0.12em] text-[var(--color-muted)] hover:text-[var(--color-foreground)]">Clear</button>
             <span className="text-sm font-medium text-[var(--color-anchor)]">{filtered.length} of {contacts.length}</span>
-            <button onClick={() => setComposeOpen(true)} disabled={sendTargets.length === 0} className="ml-auto rounded-full bg-[var(--color-accent)] px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--color-ink)] disabled:opacity-40" title="Compose an email to the current list / selection">✉ Compose {sendTargets.length}</button>
+            <div className="ml-auto flex items-center gap-2">
+              <CopyEmailsButton emails={sendTargets.map((c) => c.email!).filter(Boolean)} />
+              <button onClick={() => setComposeOpen(true)} disabled={sendTargets.length === 0} className="rounded-full bg-[var(--color-accent)] px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--color-ink)] disabled:opacity-40" title="Compose an email to the current list / selection">✉ Compose {sendTargets.length}</button>
+            </div>
           </div>
 
           {selected.size > 0 && (
             <div className="flex items-center gap-3 rounded-xl bg-[var(--color-anchor)] px-4 py-2 text-sm text-[var(--color-shell)]">
               <span className="font-medium">{selected.size} selected</span>
               <button onClick={() => setSelected(new Set())} className="text-xs uppercase tracking-wide text-[var(--color-sand)] hover:text-white">Clear selection</button>
-              <button onClick={() => setComposeOpen(true)} disabled={sendTargets.length === 0} className="ml-auto rounded-full bg-[var(--color-accent)] px-4 py-1 text-xs font-semibold uppercase tracking-wide text-[var(--color-ink)] disabled:opacity-40">Compose to {sendTargets.length} →</button>
+              <div className="ml-auto flex items-center gap-2">
+                <CopyEmailsButton emails={sendTargets.map((c) => c.email!).filter(Boolean)} className="rounded-full border border-[var(--color-sand)]/50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[var(--color-sand)] transition hover:text-white disabled:opacity-40" />
+                <button onClick={() => setComposeOpen(true)} disabled={sendTargets.length === 0} className="rounded-full bg-[var(--color-accent)] px-4 py-1 text-xs font-semibold uppercase tracking-wide text-[var(--color-ink)] disabled:opacity-40">Compose to {sendTargets.length} →</button>
+              </div>
             </div>
           )}
 

@@ -64,6 +64,7 @@ export async function sendBroadcastChunk(input: {
   subject: string;
   body: string;
   recipientIds: string[];
+  replyTo?: string; // the signed-in operator — broker replies route to them, not hello@
 }): Promise<{ sent: string[]; failed: string[]; skipped: string[] }> {
   if (!broadcastReady()) throw new Error("Broadcast sending not configured");
   const secret = process.env.HUB_SESSION_SECRET || "";
@@ -86,7 +87,7 @@ export async function sendBroadcastChunk(input: {
         const text =
           personalize(input.body, c) +
           `\n\n—\n${SITE.name}\n${address}\n\nPrefer not to hear from us? Unsubscribe: ${link}`;
-        await sendMail({ to: c.email, subject: personalize(input.subject, c), text });
+        await sendMail({ to: c.email, subject: personalize(input.subject, c), text, replyTo: input.replyTo });
         sent.push(id);
       } catch {
         failed.push(id);
