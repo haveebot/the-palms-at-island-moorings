@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { HubNav } from "@/components/HubNav";
 import { HubLogout } from "@/components/HubLogout";
+import { readSession, HUB_COOKIE } from "@/lib/hub-session";
 
 export const metadata: Metadata = {
   title: "Hub · The Palms",
   robots: { index: false, follow: false },
 };
 
-export default function HubAppLayout({ children }: { children: React.ReactNode }) {
+export default async function HubAppLayout({ children }: { children: React.ReactNode }) {
+  const session = await readSession((await cookies()).get(HUB_COOKIE)?.value, process.env.HUB_SESSION_SECRET || "");
   return (
     <div className="min-h-screen bg-[var(--color-shell)]">
       <header className="sticky top-0 z-40 bg-[var(--color-ink)] text-[var(--color-shell)]">
@@ -21,7 +24,12 @@ export default function HubAppLayout({ children }: { children: React.ReactNode }
             </div>
             <HubNav />
           </div>
-          <HubLogout />
+          <div className="flex items-center gap-4">
+            {session?.email && (
+              <span className="hidden text-xs text-[var(--color-sand)] sm:inline" title="Signed in">{session.email}</span>
+            )}
+            <HubLogout />
+          </div>
         </div>
       </header>
       <main className="mx-auto max-w-6xl px-6 py-10">{children}</main>
