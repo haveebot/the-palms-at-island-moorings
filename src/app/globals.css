@@ -1,26 +1,41 @@
 @import "tailwindcss";
 
+/* Interim brand body type — self-hosted from the brand kit (2026-06-22) */
+@font-face {
+  font-family: "Glacial Indifference";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/GlacialIndifference-Regular.woff") format("woff");
+}
+@font-face {
+  font-family: "Glacial Indifference";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/GlacialIndifference-Bold.woff") format("woff");
+}
+
 /*
- * The Palms at Island Moorings — INTERIM brand tokens (Moodboard V1).
+ * The Palms at Island Moorings — INTERIM brand tokens.
  *
- * ⚠️  Tuned to Collie Farley / Farley Creative's Concept Moodboard V1
- *     (2026-06-21): warm cream + sand/taupe neutrals, a green family from
- *     sage → emerald → pine → near-black, with brushed brass as the metallic
- *     accent. Still INTERIM — the final locked brand kit (logo suite, exact
- *     palette, type, guidelines) is Collie's, delivered the week of June 22.
- *     Swap this whole @theme block when it lands. Nothing here is final.
+ * ⚠️  Tuned to Collie Farley / Farley Creative's interim brand kit
+ *     (2026-06-22): off-white + blush neutrals, a teal → forest → near-black
+ *     green family, with brand gold as the metallic accent. Type: Cormorant
+ *     Garamond (display) + Glacial Indifference (body). Still INTERIM — swap
+ *     when the final locked kit lands. Nothing here is final.
  */
 @theme {
-  /* Foundation (≈90% of surface) */
-  --color-ink: #14201E;     /* deep waterline ink — primary text */
-  --color-shell: #F4F0E9;   /* warm shell white — page background */
-  --color-sand: #E7DFD2;    /* warm sand neutral fill */
+  /* Foundation (≈90% of surface) — interim brand kit (2026-06-22) */
+  --color-ink: #14201E;     /* deep waterline ink — primary text (kit near-black #0C0804) */
+  --color-shell: #EFEFE3;   /* off-white — page background */
+  --color-sand: #EAE1D8;    /* warm blush neutral fill */
   --color-fog: #DDE3E1;     /* cool fog neutral fill */
 
   /* Accents (used sparingly) */
-  --color-brass: #B08A4F;   /* brushed brass — CTAs, fine rules, "the click color" */
-  --color-harbor: #1C4A3B;  /* deep pine green — anchor, section headers (Moodboard V1; was navy #2C3A5A) */
-  --color-palm: #43705F;    /* emerald — tertiary, gradient depth */
+  --color-brass: #B5933B;   /* brand gold — CTAs, fine rules, "the click color" (matches logo) */
+  --color-harbor: #1B4F4C;  /* brand teal-green — anchor, section headers (matches hero + bands) */
+  --color-palm: #1F352E;    /* forest green — tertiary, gradient depth */
 
   /* Semantic aliases */
   --color-foreground: var(--color-ink);
@@ -31,7 +46,7 @@
 
   /* Typography — display serif (luxury real-estate cadence) + clean sans body */
   --font-display: "Cormorant Garamond", "Times New Roman", "Times", serif;
-  --font-sans: "Montserrat", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --font-sans: "Glacial Indifference", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
 }
 
 * {

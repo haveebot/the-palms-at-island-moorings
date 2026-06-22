@@ -146,14 +146,11 @@ export default function Home() {
             </p>
           </Reveal>
           <Reveal delay={120}>
-            {/* Placeholder map / aerial area */}
-            <div
-              className="aspect-[5/4] w-full rounded-lg border border-[var(--color-sand)]"
-              style={{
-                background:
-                  "linear-gradient(160deg, var(--color-harbor), var(--color-palm))",
-              }}
-              aria-hidden="true"
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/brand/location/island-moorings-marina.jpg"
+              alt="The Island Moorings marina at sunset — Port Aransas"
+              className="aspect-[3/2] w-full rounded-lg border border-[var(--color-sand)] object-cover shadow-sm"
             />
           </Reveal>
         </div>
