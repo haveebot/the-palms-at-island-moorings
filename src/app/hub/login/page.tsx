@@ -4,25 +4,25 @@ import { useEffect, useState } from "react";
 import { SITE } from "@/lib/site";
 
 const ERRORS: Record<string, string> = {
-  denied: "That account isn't allowed. Sign in with your @thepalms.dev account.",
+  denied: "That account isn't allowed. Use your @thepalms.dev account.",
   state: "Sign-in expired — please try again.",
   exchange: "Couldn't complete Google sign-in. Try again.",
-  "sso-off": "Google sign-in isn't enabled yet — use the access password below.",
+  "sso-off": "Google sign-in isn't enabled yet — sign in with your email and password below.",
   config: "Sign-in isn't configured yet.",
 };
 
 export default function HubLogin() {
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [teamMode, setTeamMode] = useState(false);
   const [status, setStatus] = useState<"idle" | "submitting" | "error">("idle");
   const [msg, setMsg] = useState("");
-  const [showPw, setShowPw] = useState(false);
 
   useEffect(() => {
     const e = new URLSearchParams(window.location.search).get("e");
     if (e && ERRORS[e]) {
       setMsg(ERRORS[e]);
       setStatus("error");
-      if (e === "sso-off") setShowPw(true);
     }
   }, []);
 
@@ -30,11 +30,12 @@ export default function HubLogin() {
     e.preventDefault();
     setStatus("submitting");
     setMsg("");
+    const payload = teamMode ? { password } : { email, password };
     try {
       const res = await fetch("/api/hub/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify(payload),
       });
       if (res.ok) {
         window.location.href = "/hub";
@@ -48,6 +49,9 @@ export default function HubLogin() {
       setMsg("Something went wrong.");
     }
   }
+
+  const field =
+    "w-full rounded-md border border-[var(--color-sand)] bg-white/70 px-4 py-3 text-sm outline-none transition focus:border-[var(--color-accent)]";
 
   return (
     <main
@@ -72,42 +76,41 @@ export default function HubLogin() {
         >
           <GoogleMark /> Sign in with Google
         </a>
-        <p className="mt-2 text-center text-xs text-[var(--color-muted)]">
-          Use your <span className="font-medium">@thepalms.dev</span> account.
-        </p>
+
+        <div className="my-5 flex items-center gap-3 text-[0.65rem] uppercase tracking-[0.2em] text-[var(--color-muted)]">
+          <span className="h-px flex-1 bg-[var(--color-sand)]" /> or <span className="h-px flex-1 bg-[var(--color-sand)]" />
+        </div>
+
+        <form onSubmit={onSubmit} className="space-y-3">
+          {!teamMode && (
+            <label className="block">
+              <span className="mb-1 block text-xs uppercase tracking-[0.12em] text-[var(--color-muted)]">Email</span>
+              <input type="email" autoComplete="username" autoFocus value={email} onChange={(e) => setEmail(e.target.value)} className={field} placeholder="you@thepalms.dev" />
+            </label>
+          )}
+          <label className="block">
+            <span className="mb-1 block text-xs uppercase tracking-[0.12em] text-[var(--color-muted)]">
+              {teamMode ? "Team access password" : "Password"}
+            </span>
+            <input type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} className={field} />
+          </label>
+          <button
+            type="submit"
+            disabled={status === "submitting"}
+            className="w-full rounded-full bg-[var(--color-accent)] px-6 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-ink)] transition hover:opacity-90 disabled:opacity-60"
+          >
+            {status === "submitting" ? "Signing in…" : "Enter the hub"}
+          </button>
+        </form>
 
         <button
-          onClick={() => setShowPw((v) => !v)}
-          className="mt-6 w-full text-center text-[0.65rem] uppercase tracking-[0.2em] text-[var(--color-muted)] hover:text-[var(--color-foreground)]"
+          onClick={() => { setTeamMode((v) => !v); setMsg(""); setStatus("idle"); }}
+          className="mt-5 w-full text-center text-[0.65rem] uppercase tracking-[0.2em] text-[var(--color-muted)] hover:text-[var(--color-foreground)]"
         >
-          {showPw ? "Hide" : "Use access password instead"}
+          {teamMode ? "Sign in with email instead" : "Use team access password"}
         </button>
 
-        {showPw && (
-          <form onSubmit={onSubmit} className="mt-4 space-y-4">
-            <label className="block">
-              <span className="mb-1 block text-xs uppercase tracking-[0.12em] text-[var(--color-muted)]">
-                Access password
-              </span>
-              <input
-                type="password"
-                autoFocus
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-md border border-[var(--color-sand)] bg-white/70 px-4 py-3 text-sm outline-none transition focus:border-[var(--color-accent)]"
-              />
-            </label>
-            <button
-              type="submit"
-              disabled={status === "submitting"}
-              className="w-full rounded-full bg-[var(--color-accent)] px-6 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-ink)] transition hover:opacity-90 disabled:opacity-60"
-            >
-              {status === "submitting" ? "Signing in…" : "Enter the hub"}
-            </button>
-          </form>
-        )}
-
-        <p className="mt-6 text-center text-[0.65rem] uppercase tracking-[0.2em] text-[var(--color-muted)]">{SITE.name}</p>
+        <p className="mt-5 text-center text-[0.65rem] uppercase tracking-[0.2em] text-[var(--color-muted)]">{SITE.name}</p>
       </div>
     </main>
   );
