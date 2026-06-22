@@ -123,10 +123,10 @@ export default function Home() {
         <Reveal>
           <div className="relative block w-full md:hidden">
             <picture>
-              <source srcSet="/brand/offering/offering-mobile.webp" type="image/webp" />
+              <source srcSet="/brand/offering/offering-mobile-v2.webp" type="image/webp" />
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/brand/offering/offering-mobile.jpg"
+                src="/brand/offering/offering-mobile-v2.jpg"
                 alt="Twenty-one marina-front homesites, 5,000–10,000 sq ft — the only investment of its kind in Island Moorings"
                 className="block w-full"
               />
