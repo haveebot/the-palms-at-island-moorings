@@ -26,19 +26,20 @@ export default function Home() {
           }}
           aria-hidden="true"
         />
-        {/* drone loop at 56% — the #1b4f4c base shows through and tints it */}
-        <video
-          className="absolute inset-0 h-full w-full scale-[1.15] object-cover opacity-[0.56]"
-          autoPlay
-          muted
-          loop
-          playsInline
-          poster="/brand/hero/gulf-poster.jpg"
-          aria-hidden="true"
-        >
-          <source src="/brand/hero/gulf.webm" type="video/webm" />
-          <source src="/brand/hero/gulf.mp4" type="video/mp4" />
-        </video>
+        {/* drone loop at 56% — wrapper clips the zoom so the scale never overflows the viewport */}
+        <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
+          <video
+            className="h-full w-full scale-[1.15] object-cover opacity-[0.56]"
+            autoPlay
+            muted
+            loop
+            playsInline
+            poster="/brand/hero/gulf-poster.jpg"
+          >
+            <source src="/brand/hero/gulf.webm" type="video/webm" />
+            <source src="/brand/hero/gulf.mp4" type="video/mp4" />
+          </video>
+        </div>
         {/* gentle center darken so the white logo holds over moving water */}
         <div
           className="absolute inset-0"
