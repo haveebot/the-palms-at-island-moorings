@@ -83,20 +83,22 @@ export default function Home() {
       </section>
 
       {/* VISION — the legacy / last-parcel story (public facts, high-level) */}
-      <section className="mx-auto max-w-3xl px-6 py-24 text-center">
-        <Reveal>
-          <p className="eyebrow">The Development</p>
-          <h2 className="display mt-4 text-3xl text-[var(--color-anchor)] sm:text-4xl">
-            The last legacy parcel in Island Moorings.
-          </h2>
-          <p className="mx-auto mt-6 max-w-2xl text-[var(--color-muted)]">
-            Island Moorings was planned in 1960 as Port Aransas&rsquo; original
-            waterfront community — homes built around a private, wind-protected
-            marina and yacht club. The Palms is its final undeveloped parcel: a
-            limited release of marina-front homesites. Renderings and reservation
-            details are being finalized — join the Founders&rsquo; List to be first.
-          </p>
-        </Reveal>
+      <section className="bg-[#1b4f4c] py-24 text-center">
+        <div className="mx-auto max-w-3xl px-6">
+          <Reveal>
+            <p className="eyebrow !text-[var(--color-accent)]">The Development</p>
+            <h2 className="display mt-4 text-3xl text-[var(--color-shell)] sm:text-4xl">
+              The last legacy parcel in Island Moorings.
+            </h2>
+            <p className="mx-auto mt-6 max-w-2xl text-[var(--color-shell)]/80">
+              Island Moorings was planned in 1960 as Port Aransas&rsquo; original
+              waterfront community — homes built around a private, wind-protected
+              marina and yacht club. The Palms is its final undeveloped parcel: a
+              limited release of marina-front homesites. Renderings and reservation
+              details are being finalized — join the Founders&rsquo; List to be first.
+            </p>
+          </Reveal>
+        </div>
       </section>
 
       {/* THE OFFERING — real, public product facts (no fabrication) */}
