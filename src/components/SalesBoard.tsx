@@ -14,6 +14,7 @@ import { brokerageSlug } from "@/lib/brokerages-shared";
 import { scoreContact, PRIORITY_TIERS, tierBadgeClass } from "@/lib/scoring";
 import { BroadcastComposer } from "@/components/BroadcastComposer";
 import { CopyEmailsButton } from "@/components/CopyEmailsButton";
+import { ScoringGuide } from "@/components/ScoringGuide";
 
 const TYPE_LABEL: Record<string, string> = Object.fromEntries(CONTACT_TYPES.map((t) => [t.key, t.label]));
 const STATUS_LABEL: Record<string, string> = Object.fromEntries(CONTACT_STATUSES.map((s) => [s.key, s.label]));
@@ -40,6 +41,7 @@ export function SalesBoard({ contacts, broadcasts, canSend, initialBrokerage = "
   const [sort, setSort] = useState("priority");
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [composeOpen, setComposeOpen] = useState(false);
+  const [guideOpen, setGuideOpen] = useState(false);
 
   const allTags = useMemo(() => {
     const s = new Set<string>();
@@ -175,6 +177,7 @@ export function SalesBoard({ contacts, broadcasts, canSend, initialBrokerage = "
         {[["Contacts", stats.total], ["Brokerages", stats.brokerages], ["Agents", stats.agents], ["Emailable", stats.emailable]].map(([l, n]) => (
           <span key={l as string} className="rounded-full border border-[var(--color-sand)] bg-white/50 px-3 py-1"><span className="font-semibold text-[var(--color-anchor)]">{n}</span> <span className="text-[var(--color-muted)]">{l}</span></span>
         ))}
+        <button onClick={() => setGuideOpen(true)} className="rounded-full border border-[var(--color-sand)] bg-white/50 px-3 py-1 text-[var(--color-muted)] transition hover:border-[var(--color-accent)] hover:text-[var(--color-anchor)]" title="How prospects are scored">ⓘ How scoring works</button>
       </div>
 
       {adding && (
@@ -328,6 +331,7 @@ export function SalesBoard({ contacts, broadcasts, canSend, initialBrokerage = "
       )}
 
       <BroadcastComposer open={composeOpen} onClose={() => setComposeOpen(false)} targets={sendTargets} label={segmentLabel} canSend={canSend} onSent={() => { setSelected(new Set()); router.refresh(); }} />
+      <ScoringGuide open={guideOpen} onClose={() => setGuideOpen(false)} />
     </div>
   );
 }

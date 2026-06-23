@@ -116,31 +116,32 @@ export const METRO_WEALTH_DEPTH: Record<string, number> = Object.fromEntries(
 );
 
 /**
- * Feeder-market weight — tuned to THE PALMS' buyer (Collie's brief): proximity to
- * Port Aransas is the strategic axis, NOT raw corridor wealth. San Antonio +
- * Austin are the closest major-metro feeders; Coastal Bend is local sellers + the
- * marina / boat-owner network (the wedge); Houston + DFW are meaningful but
- * farther secondaries.
+ * Market weight — where the qualified $2M+ buyers are, as a SECONDARY driver
+ * behind broker caliber. Blends two real axes:
+ *  - proximity to Port Aransas (San Antonio + Austin = the closest major feeders)
+ *  - $2M+ buyer-pool DEPTH (Houston + Dallas hold the deepest luxury pools — the
+ *    Phase-2 Census finding, see METRO_WEALTH_DEPTH — so they sit just behind the
+ *    close feeders, not at the bottom).
+ * Coastal Bend is LOCAL PRESENCE (the development's own market + the marina
+ * network), not the metro buyer engine — so its top luxury agents still rank high
+ * via broker caliber, while local generalists no longer crowd the top of the list.
  *
- * NB (surfaced by the Phase-2 Census pass): the deepest pools of $2M+ buyers
- * actually sit in Houston + Dallas (see METRO_WEALTH_DEPTH), which proximity
- * weighting deliberately discounts. Whether to lift the secondary-feeder floor to
- * chase that depth is a brief decision (Collie/Winston), not a data inference, so
- * these weights are unchanged here — the data is surfaced, the call is theirs.
+ * (v2, 2026-06-22 — reweighted with Winston after the score over-ranked Coastal
+ * Bend + the marina wedge. Broker caliber is now the spine; see scoring.ts.)
  */
 export const MARKET_AFFLUENCE: Record<string, number> = {
-  "Coastal Bend": 20,
-  "San Antonio": 20,
-  "Austin": 18,
-  "Houston": 12,
-  "Dallas": 12,
-  "Other": 6,
+  "San Antonio": 16,
+  "Austin": 16,
+  "Houston": 15,
+  "Dallas": 15,
+  "Coastal Bend": 12,
+  "Other": 5,
 };
 
 export function marketNote(market?: string): string {
-  if (market === "Coastal Bend") return "local / marina";
   if (market === "San Antonio" || market === "Austin") return "closest feeder";
-  if (market === "Houston" || market === "Dallas") return "secondary feeder";
+  if (market === "Houston" || market === "Dallas") return "deep buyer pool";
+  if (market === "Coastal Bend") return "local presence";
   return "";
 }
 
@@ -153,11 +154,19 @@ const LUXURY = [
   "greenwood king", "bernstein realty", "beth wolff",
 ];
 
-/** Brokerage prestige signal — implies affluent-corridor access. */
+/**
+ * Broker caliber is the PRIMARY lead driver — elite houses bring elite buyers, so
+ * these are the heaviest single levers in the score (see scoring.ts). A top
+ * producer at a luxury house outranks a marina contact or a local generalist.
+ */
+export const ULTRA_BROKERAGE_WEIGHT = 35;
+export const LUXURY_BROKERAGE_WEIGHT = 24;
+
+/** Brokerage prestige signal — implies affluent-corridor access + luxury buyers. */
 export function brokeragePrestige(company?: string): { weight: number; label: string | null } {
   if (!company) return { weight: 0, label: null };
   const c = company.toLowerCase();
-  if (ULTRA_LUXURY.some((p) => c.includes(p))) return { weight: 25, label: "Ultra-luxury brokerage" };
-  if (LUXURY.some((p) => c.includes(p))) return { weight: 18, label: "Luxury brokerage" };
+  if (ULTRA_LUXURY.some((p) => c.includes(p))) return { weight: ULTRA_BROKERAGE_WEIGHT, label: "Ultra-luxury brokerage" };
+  if (LUXURY.some((p) => c.includes(p))) return { weight: LUXURY_BROKERAGE_WEIGHT, label: "Luxury brokerage" };
   return { weight: 0, label: null };
 }
