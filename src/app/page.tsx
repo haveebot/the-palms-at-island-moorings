@@ -57,8 +57,11 @@ export default function Home() {
             className="hero-logo w-[clamp(260px,46vw,560px)]"
           />
           <p className="hero-sub mt-9 max-w-xl text-base text-white/85 sm:text-lg">
-            The final 21 homesites in Island Moorings — Port Aransas&rsquo; original
-            marina community, on the water since 1960. The Founders&rsquo; List is now forming.
+            The last of the Island Moorings legacy. Twenty-one exclusive homesites
+            in Port Aransas&rsquo; original marina community on the water since 1960.
+            <span className="mt-3 block text-balance">
+              The Founders&rsquo; List is now forming and open to a select few.
+            </span>
           </p>
           <div className="hero-cta mt-9 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link
