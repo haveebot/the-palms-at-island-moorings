@@ -62,9 +62,14 @@ export default function HubLogin() {
       }}
     >
       <div className="w-full max-w-sm rounded-2xl bg-[var(--color-shell)] p-8 shadow-2xl">
-        <p className="eyebrow">The Palms · Island Moorings</p>
-        <h1 className="display mt-3 text-2xl text-[var(--color-anchor)]">Owner &amp; Partner Hub</h1>
-        <p className="mt-1 text-sm text-[var(--color-muted)]">Sign in to view pre-sales activity.</p>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/brand/the-palms-logo.svg"
+          alt="The Palms at Island Moorings"
+          className="mx-auto h-16 w-auto"
+        />
+        <h1 className="display mt-5 text-center text-2xl text-[var(--color-anchor)]">Owner &amp; Partner Hub</h1>
+        <p className="mt-1 text-center text-sm text-[var(--color-muted)]">Sign in to view pre-sales activity.</p>
 
         {status === "error" && msg && (
           <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{msg}</p>

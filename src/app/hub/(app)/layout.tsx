@@ -16,11 +16,16 @@ export default async function HubAppLayout({ children }: { children: React.React
       <header className="sticky top-0 z-40 bg-[var(--color-ink)] text-[var(--color-shell)]">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-6 py-3">
           <div className="flex items-center gap-6">
-            <div className="leading-tight">
-              <p className="display text-lg">The Palms · Hub</p>
-              <p className="text-[0.6rem] uppercase tracking-[0.22em] text-[var(--color-sand)]">
-                Island Moorings · pre-sales
-              </p>
+            <div className="flex items-center gap-3">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/brand/the-palms-logo-white.svg"
+                alt="The Palms at Island Moorings"
+                className="h-9 w-auto"
+              />
+              <span className="hidden rounded border border-white/25 px-1.5 py-0.5 text-[0.55rem] font-semibold uppercase tracking-[0.22em] text-[var(--color-sand)] sm:inline">
+                Hub
+              </span>
             </div>
             <HubNav />
           </div>
