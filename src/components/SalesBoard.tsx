@@ -15,6 +15,7 @@ import { scoreContact, PRIORITY_TIERS, tierBadgeClass } from "@/lib/scoring";
 import { BroadcastComposer } from "@/components/BroadcastComposer";
 import { CopyEmailsButton } from "@/components/CopyEmailsButton";
 import { ScoringGuide } from "@/components/ScoringGuide";
+import { SalesMap } from "@/components/SalesMap";
 
 const TYPE_LABEL: Record<string, string> = Object.fromEntries(CONTACT_TYPES.map((t) => [t.key, t.label]));
 const STATUS_LABEL: Record<string, string> = Object.fromEntries(CONTACT_STATUSES.map((s) => [s.key, s.label]));
@@ -26,7 +27,7 @@ export function SalesBoard({ contacts, broadcasts, canSend, initialBrokerage = "
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [adding, setAdding] = useState(false);
-  const [view, setView] = useState<"contacts" | "brokerages">("contacts");
+  const [view, setView] = useState<"contacts" | "brokerages" | "map">("contacts");
 
   // filters
   const [search, setSearch] = useState("");
@@ -139,6 +140,12 @@ export function SalesBoard({ contacts, broadcasts, canSend, initialBrokerage = "
     drillIntoBrokerage(name);
     setTimeout(() => document.getElementById("broadcast")?.scrollIntoView({ behavior: "smooth", block: "center" }), 120);
   }
+  function pickMarket(name: string) {
+    clearFilters();
+    setMarket(name);
+    setSelected(new Set());
+    setView("contacts");
+  }
 
   const field = "rounded-md border border-[var(--color-sand)] bg-white/70 px-3 py-2 text-sm outline-none focus:border-[var(--color-accent)]";
 
@@ -163,7 +170,7 @@ export function SalesBoard({ contacts, broadcasts, canSend, initialBrokerage = "
           <h1 className="display text-2xl text-[var(--color-anchor)]">Sales</h1>
           {/* view toggle */}
           <div className="flex rounded-full border border-[var(--color-sand)] p-0.5 text-xs">
-            {(["contacts", "brokerages"] as const).map((v) => (
+            {(["contacts", "brokerages", "map"] as const).map((v) => (
               <button key={v} onClick={() => setView(v)} className={`rounded-full px-3 py-1 font-semibold uppercase tracking-[0.1em] transition ${view === v ? "bg-[var(--color-ink)] text-[var(--color-shell)]" : "text-[var(--color-muted)]"}`}>{v}</button>
             ))}
           </div>
@@ -193,7 +200,10 @@ export function SalesBoard({ contacts, broadcasts, canSend, initialBrokerage = "
         </form>
       )}
 
-      {view === "brokerages" ? (
+      {view === "map" ? (
+        /* ============ COMMAND-CENTER MAP ============ */
+        <SalesMap contacts={contacts} scoreOf={scoreOf} onPickMarket={pickMarket} />
+      ) : view === "brokerages" ? (
         /* ============ BROKERAGES ROLLUP ============ */
         <div className="overflow-x-auto">
           <p className="mb-3 text-sm text-[var(--color-muted)]">Your coverage organized by firm. Open a brokerage to manage its relationship + agents.</p>
