@@ -14,19 +14,19 @@ import { CORRIDORS_BY_METRO, ACS_INCOME_CAP, ACS_HOME_VALUE_CAP, type Corridor }
  * arc into it.
  */
 
-// Stylized Texas silhouette (viewBox 0 0 1000 940) — recognizable, brand-clean.
+// Accurate Texas state boundary (viewBox 0 0 1000 949). Real geometry — US Census
+// state-boundary polygon (152 pts) projected equirectangular with a cos(lat)
+// aspect correction so the shape reads true. Pin coordinates below come from the
+// SAME projection of each metro's real lat/long, so they land geographically.
 const TX_PATH =
-  "M250 82 L373 82 L373 250 L432 250 L474 292 L542 276 L602 302 L662 282 L722 302 L770 296 " +
-  "L777 360 L763 430 L802 470 L773 512 L742 522 Q702 562 662 582 Q622 612 587 652 Q562 686 541 716 " +
-  "L521 754 L496 742 L471 702 L446 662 L411 642 L396 606 L361 561 L346 576 L321 601 L301 576 L286 541 " +
-  "L251 511 L161 431 L110 431 L151 406 L151 251 L250 251 Z";
+  "M374.6 24.0L506.2 24.0L506.2 188.5L511.7 187.6L528.0 203.8L536.8 201.0L559.8 202.0L565.0 218.2L579.7 217.3L595.6 224.7L609.9 223.8L615.9 230.8L625.0 222.9L638.9 226.6L644.9 235.9L655.2 237.3L660.8 248.9L673.5 237.8L690.6 244.3L697.0 251.2L705.3 248.0L711.3 258.7L729.6 239.6L734.7 249.4L750.6 249.4L765.7 255.4L771.3 262.8L785.6 249.8L801.1 245.7L808.3 250.3L825.3 241.9L829.3 246.6L848.0 247.0L852.8 239.6L871.5 248.0L878.6 257.7L906.4 267.0L914.0 274.9L928.3 270.7L938.6 274.5L938.6 319.5L938.6 406.4L954.5 425.0L954.9 443.6L974.8 478.0L976.0 496.1L968.4 518.0L961.3 526.8L963.7 538.4L958.5 547.2L964.1 563.5L947.0 593.7L953.3 602.1L941.4 602.5L903.7 614.1L890.1 607.6L887.8 593.7L878.2 603.5L871.5 601.1L867.9 613.2L875.4 618.3L876.6 634.1L863.1 650.9L841.2 671.8L797.5 694.1L793.2 690.4L780.0 695.9L779.6 690.8L761.8 694.5L753.4 683.8L748.2 686.2L767.3 708.0L753.4 715.0L740.3 710.8L738.3 726.1L722.0 741.9L705.3 771.2L694.6 801.9L686.6 799.6L684.6 810.7L693.0 807.9L689.0 830.2L683.4 831.2L683.0 843.7L689.8 850.7L691.8 876.2L699.7 885.1L701.7 901.3L708.1 915.7L685.8 924.6L676.7 913.4L659.6 909.2L636.9 910.1L617.5 896.2L602.8 894.8L591.6 883.7L576.5 879.9L566.2 869.3L559.4 843.7L546.3 828.4L547.9 815.4L541.9 801.4L543.9 789.3L534.8 775.9L527.2 774.5L514.9 762.4L510.9 747.0L500.2 733.1L484.7 721.5L477.1 695.9L470.0 689.0L460.4 668.5L457.3 651.8L448.1 639.7L432.6 629.0L429.0 621.6L414.7 615.1L403.6 596.5L371.8 592.3L352.7 593.2L336.4 586.7L332.9 595.6L315.4 598.3L302.2 616.0L294.3 644.4L289.9 644.8L280.0 661.5L268.1 662.0L250.2 649.0L205.3 628.1L196.5 616.9L179.0 606.2L166.7 582.1L165.9 560.2L153.6 542.6L150.8 527.3L142.9 517.5L114.6 503.1L99.5 483.6L87.2 476.6L74.1 459.9L55.8 451.0L43.1 428.7L32.3 424.1L24.0 414.3L26.0 406.0L283.6 406.0L283.6 320.9L285.2 235.0L285.6 24.0L288.3 24.0L374.6 24.0Z";
 
 const MARKET_GEO: Record<string, { x: number; y: number; label: string }> = {
-  Dallas: { x: 578, y: 320, label: "Dallas–Fort Worth" },
-  Houston: { x: 702, y: 508, label: "Houston" },
-  Austin: { x: 527, y: 482, label: "Austin" },
-  "San Antonio": { x: 470, y: 542, label: "San Antonio" },
-  "Coastal Bend": { x: 560, y: 672, label: "Coastal Bend" },
+  Dallas: { x: 738, y: 340, label: "Dallas–Fort Worth" },
+  Houston: { x: 842, y: 596, label: "Houston" },
+  Austin: { x: 670, y: 553, label: "Austin" },
+  "San Antonio": { x: 615, y: 625, label: "San Antonio" },
+  "Coastal Bend": { x: 716, y: 757, label: "Coastal Bend" },
 };
 const FEEDERS = ["Dallas", "Houston", "Austin", "San Antonio"];
 const ANCHOR = MARKET_GEO["Coastal Bend"];
@@ -75,7 +75,7 @@ export function SalesMap({
     <div className="grid gap-5 lg:grid-cols-[1fr_22rem]">
       {/* ---- the map ---- */}
       <div className="rounded-2xl border border-[var(--color-sand)] bg-gradient-to-b from-white/60 to-[var(--color-sand)]/20 p-2">
-        <svg viewBox="0 0 1000 940" className="h-auto w-full" role="img" aria-label="Texas feeder-market map">
+        <svg viewBox="0 0 1000 949" className="h-auto w-full" role="img" aria-label="Texas feeder-market map">
           {/* feeder arcs into the anchor */}
           {FEEDERS.map((m) => {
             const g = MARKET_GEO[m];
