@@ -9,7 +9,7 @@ import { listDocs } from "./store";
  * Neon/Postgres, Neon's native PITR + automated backups take over and this
  * becomes a belt-and-suspenders off-store export.)
  */
-const COLLECTIONS = ["contacts", "leads", "units", "broadcasts", "campaigns", "documents"];
+const COLLECTIONS = ["contacts", "leads", "units", "broadcasts", "campaigns", "documents", "brokerages", "users"];
 
 export async function backupAll(): Promise<{ records: number; key: string }> {
   const snap: { takenAt: string; collections: Record<string, unknown[]> } = {
