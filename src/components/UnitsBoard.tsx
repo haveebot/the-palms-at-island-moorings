@@ -63,14 +63,10 @@ export function UnitsBoard({ units }: { units: Unit[] }) {
 
       {units.length === 0 ? (
         <div className="rounded-xl border border-dashed border-[var(--color-sand)] p-8 text-center">
-          <p className="text-sm text-[var(--color-muted)]">No residences yet.</p>
-          <button
-            onClick={() => call("/api/hub/seed", "POST")}
-            disabled={busy}
-            className="mt-3 rounded-full border border-[var(--color-sand)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-muted)] hover:text-[var(--color-foreground)] disabled:opacity-60"
-          >
-            Seed sample residences
-          </button>
+          <p className="text-sm text-[var(--color-muted)]">No homesites loaded yet.</p>
+          <p className="mt-1 text-xs text-[var(--color-muted)]">
+            Use &ldquo;+ Add residence&rdquo; for each homesite once lot details and pricing are set.
+          </p>
         </div>
       ) : (
         <table className="w-full border-collapse text-sm">
