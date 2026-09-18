@@ -1,63 +1,61 @@
 # Next actions — The Palms at Island Moorings
 
-_Live list. Newest decisions at top._
+_Live list. Rewritten 2026-09-18 after a full review; the June build history
+lives in git log and the handoff briefs in `docs/session-notes/`._
 
-## Outward-facing
+## Blocking now
 
-- [x] **GitHub repo** — `haveebot/the-palms-at-island-moorings` (public) ✅ 2026-06-19
-- [x] **Vercel project** — `the-palms-at-island-moorings` in `haveebots-projects`, autodeploy on push ✅
-- [x] **DNS / domain** — `thepalmsatislandmoorings.com` LIVE (apex 200, www→apex 308), `ssoProtection:null` ✅
-- [x] **Domain split** — `thepalms.dev` = operator **hub** (login → leads); `thepalmsatislandmoorings.com` = marketing only (hub paths 404). Host-routed in `src/proxy.ts`. ✅ 2026-06-19
-- [x] **Hub login** — branded `/hub/login` on `thepalms.dev`, **single shared demo password** (`HUB_ACCESS_PASSWORD`), HMAC-signed cookie session (`HUB_SESSION_SECRET`), `/hub` gated. For Shana (owner/developer) + Collie (creative). ✅
-- [x] **Lead store** — wired to a dedicated **Vercel Blob store** (`the-palms-leads`), one object per lead via `src/lib/leads.ts`. ✅ _(v1; migrate to Postgres when the hub grows — seam is one file)_
-- [x] **Operator hub** — full pre-sales ops on `thepalms.dev`: **Dashboard** (stats + lead funnel + needs-first-touch), **Leads CRM** (`/hub/leads` — stages, assignee, notes/activity, residence link, detail editor), **Inventory** (`/hub/inventory` — add/edit/delete residences, inline status, price/specs, sample seeding). Blob doc store (`leads/` + `units/`), gated `/api/hub/*`. ✅ 2026-06-19 (commit `e90b0f5`)
+- [ ] **Restore `thepalms.dev` email (Google Workspace).** As of 2026-09-18 every
+      `@thepalms.dev` address bounces ("account does not exist") and SMTP sign-in
+      for `hello@` demands a browser login. Lead alerts fail quietly (leads
+      still save to the hub), and the public footer's `info@thepalms.dev`
+      bounces. Needs an admin sign-in at admin.google.com as `hello@thepalms.dev`
+      to see and clear the cause. Then re-verify: RCPT probe → 250, SMTP auth OK,
+      one test alert (and a new app password in Vercel env if the old one is dead).
+- [ ] **`BROADCAST_MAILING_ADDRESS`** (CAN-SPAM postal address) in Vercel env →
+      turns on brand broadcast sends from the Sales composer. Copy-emails works
+      without it.
 
-- [x] **Sales** — contacts database (agents/partners/prospects), segment builder, broadcast composer (drafts; send rides the pending `.dev` sender). ✅ 2026-06-19 (commit `4cce150`)
-- [x] **Documents** — Blob file library (upload/categorize/download/delete). ✅
-- [x] **Marketing** — lead-source breakdown, public-site link, campaign tracker. ✅
+## Needed from the developer and Farley Creative
 
-- [x] **Sales cleanup (concise)** — 492→475 unique contacts, 85→73 brokerages (collapsed Compass's 5 subgroup labels → 1, merged CBIR→CB Island Escapes, removed firm-placeholder rows, merged moved-firm dupes, normalized tags). `scripts/palms-cleanup.mjs`. ✅ 2026-06-21
+- [ ] **Homesite data** for Inventory: the 21 lots (identifiers, frontage,
+      size), pricing or price bands, phase/release plan, status.
+- [ ] **Renderings / site plan** for the public page and the planned 21-lot
+      live-availability map.
+- [ ] **Final brand kit** (interim kit is live) → swap `site.ts` + `@theme`.
+- [ ] **Launch decision + date** (drives the launch gates below).
+- [ ] Confirm the public contact address (footer shows `info@thepalms.dev`).
 
-### Hub follow-ups (next)
-- [x] **Source the agent database** — **338 real web-verified contacts** (139 emailable; 321 agents + 17 partners): Coastal Bend 166 · Houston 51 · Dallas 47 · Austin 42 · SA 32, incl. the Galati Yacht Sales marina partner + Kuper's Port A coastal arm. ✅ 2026-06-20
-- [x] **Interactive Sales tool** — search · multi-select checkboxes → broadcast-to-selected · type/market/status/tag/has-email filters · sort · summary chips · clickable tags. ✅ (commit `d316206`)
-- [x] **Brokerage organization** — Contacts | Brokerages view toggle + brokerage filter; rollup shows each firm's count/emailable/markets, drill-in. 74 brokerages. ✅ (commit `657f7b0`)
-- [x] **Pulled blocked rosters** — +161 agents (KW Coastal Bend, Martha Turner Bay Area, RE/MAX/Coldwell/BHHS Corpus, gaps sweep) → **499 contacts / 86 brokerages**. ✅ 2026-06-21
-- [x] **Email enrichment (verified-only)** — +112 real emails → **305 emailable**. Kuper 6→35, Spears 2→15, KW 0→17, etc. ✅
-- [x] **"Email firm" action** — one-click per brokerage row (drills in + targets composer). ✅
-- [x] **Phone-enriched + contactability dial-in** — +58 phones, +39 emails → **492 contacts, 341 emailable, 446 phone, 477 reachable (97%), 15 uncontactable**. UI shows phone(tel)+email(mailto) + has-phone filter. ✅ 2026-06-21
-- [ ] **Chrome browser pass (needs Winston to connect the extension)** — recovers the last walled emails (HAR/RE/MAX/BHHS/Gary Greene block bots) + the final 15 uncontactable. `list_connected_browsers` returned [] — connect Claude-in-Chrome and I'll run it.
-- [ ] **Fix agent-flagged data** — Julie Reupke = Compass; Dana Kisel = Phyllis Browning; "Natalia Muse"≈"Natasha Muse"; "Mark Rose"@Briggs unconfirmed.
-- [x] **Backups** — automated daily cron (`/api/cron/backup`, `vercel.json`, gated on `CRON_SECRET`) snapshots all collections to `backups/`; + one-time off-Vercel local copy in `~/palms-backups/`. ✅ 2026-06-20
-- [x] **Scalable store** — consolidated to one object per collection (`collections/<c>.json`); reads **2.2s→0.44s**, cache-bust kills read-after-write lag, same interface (zero caller changes). ✅ 2026-06-20 (commit `0b59a69`)
-- [ ] **Postgres/Neon (tier-2, only if multi-development platform)** — provisioning is ~90% API-scriptable (`POST /v1/storage/stores/integration`, plan `free_v3`) but gated on the interactive billing-authorization (1 dashboard click). Store interface is identical so the swap stays contained. Not needed at single-development scale.
-- [ ] _Not fabricated:_ residences/documents/leads stay sample/empty until Shana's real specs+prices, Collie's floor plans, and real buyers exist
-- [ ] **Wire broadcast send** — flips on with the `.dev` email sender (same gate as lead alerts)
-- [ ] **Per-user logins** for Shana + Collie (replace the shared demo password)
-- [ ] **Lead delete** in the UI (units have delete; leads don't yet)
-- [ ] **Real residence data** to replace the 8 seeded samples; **Collie's brand** to skin the hub
-- [ ] **Full unit edit** (currently add / inline-status / delete; price/spec edit = delete + re-add)
-- [ ] Reservations/deposits + per-residence detail; CSV export; Postgres migration if volume grows
-- [ ] **Lead alerts** — code shipped, **env-gated OFF** (`src/lib/notify.ts`): set `RESEND_API_KEY` + `LEAD_ALERT_TO` (+ `LEAD_ALERT_FROM`) to turn on. Cleanest sender = thepalms.dev Workspace, or a dedicated Resend key. Deliberately no borrowed creds.
-- [ ] **`thepalms.dev`** — intentionally NOT attached to this project; reserved for the ops hub (`hub.thepalms.dev`) + email
-- [ ] **Google Workspace** on `thepalms.dev` — inbound interest address + Collie/ops mailboxes (unblocks lead alerts + a branded `/ops` home)
-- [ ] Collie GitHub collaborator invite (when she's ready to work in-repo)
+## Launch gates (do these before driving traffic)
 
-## Content / brand (pending Farley Creative)
+- [ ] Email restored and a live test alert received (above).
+- [ ] **Move lead and user data to private storage.** Collections sit on a
+      public-access Blob store at predictable paths (the store hostname is not
+      published anywhere public). Fine while leads are empty; not fine once real
+      buyers sign up. `@vercel/blob` 2.8 supports `access: "private"`.
+- [ ] Flip `robots.ts` + `layout.tsx` robots metadata to index; add `sitemap.ts`.
+- [ ] DKIM: confirm "Start authentication" is on in Workspace admin (DNS record is published).
+- [ ] Optional hardening: Turnstile on the Founders' List form (a honeypot is
+      already enforced server-side).
 
-- [ ] Swap `globals.css @theme` for real brand tokens + type
-- [ ] Logo into `/public/brand`; favicon + OG image
-- [ ] Real hero photography / renders (hero, residence cards, location aerial/map)
-- [ ] Real residence offering data → `src/lib/residences.ts` (no fabricated specifics until we have them)
-- [ ] Real copy across hero / vision / location
+## Hub backlog (build when the need is real)
 
-## Launch gating
+- [ ] 21-lot interactive availability map (public page ↔ hub Inventory) — once lot data exists
+- [ ] Self-service change-password in the hub (today: `scripts/create-user.mjs` resets)
+- [ ] Lead delete in the UI; full unit edit (today: add / inline status / delete)
+- [ ] Reservations + deposits; CSV export
+- [ ] Google SSO (code parked; needs `GOOGLE_OAUTH_CLIENT_ID` / `_SECRET`)
+- [ ] Contact data fixes flagged in June (Julie Reupke → Compass; Dana Kisel →
+      Phyllis Browning; "Natalia" vs "Natasha" Muse; Mark Rose @ Briggs unconfirmed)
+- [ ] Browser pass for the last bot-walled agent emails (needs a logged-in Chrome session)
+- [ ] Postgres/Neon only if this becomes a multi-development platform (store interface is swap-ready)
 
-- [ ] Flip `robots.ts` to allow + remove `robots:{index:false}` in `layout.tsx`
-- [ ] Add `sitemap.ts` at launch (intentionally omitted while noindexed)
-- [ ] DKIM/SPF for `thepalms.dev` email deliverability
+## Done (highlights)
 
-## Separate workstream — FC billing under PFV (tracked in workspace memory)
-
-- [ ] Stand up the Farley Creative Stripe account under PFV (walkthrough with Winston — he'll initiate)
-- [ ] Winston's 3 answers: payout bank · existing-billing migration · Collie dashboard-now vs Hub-later
+- Public site + Founders' List capture live; hub live with per-user logins
+- Sales engine: 560 web-verified contacts, brokerage pages, Census-grounded
+  scoring (v2, broker-led), in-hub Scoring Guide, command-center TX map
+- Broadcast composer (personalized, chunked, confirm-gated, unsubscribe) + Copy-emails
+- Daily backups (every collection as of 2026-09-18); documents library (2 GB/file)
+- 2026-09-18: Next 16.3.5 / nodemailer 9.1.1 security patches (0 audit
+  advisories); em-dash pass on public copy; placeholder and test data cleared from the hub

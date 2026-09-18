@@ -1,53 +1,63 @@
 # The Palms at Island Moorings
 
-Pre-sales marketing site + lead capture for **The Palms at Island Moorings** — a
-new luxury waterfront home development at Island Moorings, Port Aransas, TX.
+Pre-sales site and operator hub for **The Palms at Island Moorings**, a luxury
+waterfront homesite development at Island Moorings, Port Aransas, TX.
 
-- **Public site** → `thepalmsatislandmoorings.com`
-- **Ops spine** (email / hub / auth) → `thepalms.dev`
+- **Public site** → `thepalmsatislandmoorings.com` (live, noindexed until launch)
+- **Operator hub** → `thepalms.dev` (live, login-gated)
 
-> Status: **pre-sales scaffold, empty vessel.** Brand, copy, and imagery are
-> deliberate placeholders pending Farley Creative (Collie). The infrastructure
-> is built ahead of the creative so it drops straight in.
+Brand and public-site creative by Farley Creative. Backend, hub, and
+infrastructure built ahead of the creative so it drops straight in.
 
 ## Stack
 
 Next.js 16 · React 19 · Tailwind 4 (PostCSS) · TypeScript 6 · Vercel
-(Analytics + Speed Insights). Identical to `farley-creative-site` for
-contributor parity.
+(Blob storage, Cron, Analytics, Speed Insights). Same stack as
+`farley-creative-site` for contributor parity.
 
 ## Develop
 
 ```bash
 npm install
-npm run dev      # http://localhost:3000
+npm run dev      # http://localhost:3000 (both surfaces; hub still gated)
 npm run build    # production build
 ```
+
+`.env.local` (gitignored) needs `BLOB_READ_WRITE_TOKEN`, `HUB_SESSION_SECRET`,
+and `HUB_ACCESS_PASSWORD`. **Local dev reads and writes the production Blob
+store**, so treat hub mutations on localhost as real.
 
 ## Structure
 
 ```
-src/app/                 App Router
-  page.tsx               Pre-sales home (hero · vision · residences · location · register)
-  register/              Dedicated register-interest page
-  api/register-interest/ POST endpoint → lead capture seam
-  robots.ts              DISALLOW ALL during pre-sales (flip at launch)
-src/components/          SiteChrome (header/footer) · Reveal · RegisterInterestForm
+src/proxy.ts               Host split (public vs hub) + hub/API session gate
+src/app/
+  page.tsx                 Public pre-sales page (hero film · story · offering · location · Founders' List)
+  register/                Dedicated Founders' List page
+  api/register-interest/   Public lead capture (honeypot-protected) → leads collection + email alert
+  api/unsubscribe/         Signed broadcast unsubscribe link
+  api/cron/backup/         Daily snapshot of every collection
+  api/documents-upload/    Session-gated client-upload tokens for large files
+  api/hub/*                Hub mutations (leads, units, contacts, brokerages, broadcasts, campaigns, documents)
+  hub/login/               Hub sign-in (email + password, team-password fallback)
+  hub/(app)/               Dashboard · Leads · Inventory · Sales (+ brokerage pages, TX map) · Marketing · Documents
+src/components/            Site chrome, Founders' List form, hub boards, composer, scoring guide, sales map
 src/lib/
-  site.ts                Centralized site config — NO hardcoded brand strings elsewhere
-  residences.ts          Placeholder residence collection
-  leads-shared.ts        Lead types + validation (client-safe)
-  leads.ts               Server persistence SEAM (not wired to a store yet)
+  site.ts                  Brand strings (the only place they live)
+  store.ts                 Blob doc store (one JSON object per collection)
+  scoring.ts, texas-wealth.ts   Buyer-quality scoring + Census-grounded TX corridors
+  email.ts, notify.ts, broadcasts.ts   Workspace SMTP, lead alerts, broadcast fan-out
+  users.ts, password.ts, hub-session.ts   Hub identity + sessions
+scripts/                   create-user · backup-collections · bulk-load-contacts · palms-cleanup · upload-design-asset
 ```
 
 ## Conventions
 
-- **No hardcoded brand strings** outside `src/lib/site.ts`.
-- **Placeholder brand** — everything in `globals.css @theme` is swappable; do
-  not treat colors/type as final until Collie's brand lands.
-- **The Palms' leads ≠ Farley Creative's leads.** Buyer interest captured here
-  is the *development's* pre-sales pipeline, kept separate from FC's agency leads.
-- **Author commits as** `haveebot <haveebot@gmail.com>` for Vercel build-author parity.
-- **Commits:** lowercase imperative subject — `feat:`, `fix:`, `polish:`, `copy:`, `docs:`.
+- Brand strings only in `src/lib/site.ts`; color and type only in `globals.css @theme`.
+- No em dashes in public copy.
+- The development's leads never merge into Farley Creative's agency pipeline.
+- This repo is public: no secrets or contact data in tracked files.
+- Commit as `haveebot <haveebot@gmail.com>`; lowercase imperative subjects.
 
-See `docs/project-brief.md` for scope and `docs/next-actions.md` for the live list.
+See `CLAUDE.md` for the full conventions, `docs/next-actions.md` for the live
+list, and `docs/session-notes/` for the latest handoff.

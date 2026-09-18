@@ -1,50 +1,52 @@
 # The Palms at Island Moorings — project brief
 
-_Kickoff: 2026-06-19._
+_Kickoff 2026-06-19 · refreshed 2026-09-18._
 
 ## What it is
 
-A new **luxury waterfront home development** at the Island Moorings marina,
-Port Aransas, TX. **Pre-sales is the goal** (pre-construction interest /
-reservations), kept high-level for now.
+A **luxury waterfront homesite development** at Island Moorings, Port Aransas,
+TX: the last undeveloped parcel in Island Moorings. **Pre-sales is the goal**
+(a warm Founders' List first, then reservations and timed releases).
 
-The name is **coincidental** — NOT related to the Palm Family Ventures brands
-(Palm Republic / Palm Social Club / PALMFEST). Don't tie them together.
+Public facts (safe to publish): **21 homesites · homes 5,000–10,000 sq ft ·
+Island Moorings established 1960 · private 245-slip Marina & Yacht Club.**
+Anything beyond that (pricing, lot details, dates) waits for the developer.
+
+The name is **coincidental**. It is not related to the Palm Family Ventures
+brands (Palm Republic / Palm Social Club / PALMFEST). Don't tie them together.
 
 ## Who does what
 
-- **Collie Farley / Farley Creative** — owns the brand + creative (her client/project).
-- **Us (Winston + Claude)** — backend + infrastructure, run *ahead* of her creative.
+- **Shana**, developer/owner: the client, the source of property facts, a hub operator.
+- **Collie / Farley Creative**: brand, creative, and the public site's design; a hub operator.
+- **Winston + Claude**: backend, the operator hub, email, data, infrastructure.
 
-## Domains (both secured)
+## Domains
 
 | Domain | Role |
 |---|---|
-| `thepalmsatislandmoorings.com` | Public, user-facing pre-sales site |
-| `thepalms.dev` | Ops spine — email (`name@thepalms.dev`), hub login, auth |
+| `thepalmsatislandmoorings.com` | Public pre-sales site |
+| `thepalms.dev` | Ops spine: operator hub, `name@thepalms.dev` email (Google Workspace), auth |
 
-## Phase 1 (this scaffold)
+Both are registered through Vercel with auto-renew on (next renewal June 2027).
 
-- ✅ Standalone repo on the FC stack (Next 16 / React 19 / Tailwind 4 / TS / Vercel)
-- ✅ Public pre-sales shell — hero · vision · residences (placeholder) · location · register
-- ✅ Buyer-interest capture (`/api/register-interest`) → persistence **seam** (no store wired yet)
-- ✅ Placeholder coastal-luxury brand tokens (swappable)
-- ✅ noindex during pre-sales
-- ✅ Repo brain (README, CLAUDE.md, docs, contributor-context)
+## What's built
+
+- **Public site**: hero film, the legacy story, the offering, location, and the
+  Founders' List capture. Collie's interim brand is applied. Noindexed until launch.
+- **Operator hub** (`thepalms.dev`):
+  - **Dashboard**: inquiries, pipeline, inventory snapshot
+  - **Leads**: Founders' List CRM (stages, notes, activity)
+  - **Inventory**: homesites/residences with status and pricing, ready for real data
+  - **Sales**: 560 web-verified agent and partner contacts, brokerage pages,
+    buyer-quality scoring with a built-in guide, a Texas command-center map,
+    compose/broadcast and copy-emails
+  - **Marketing**: lead sources, campaigns
+  - **Documents**: the project library (brand kit, brief, roadmap, proposal)
 
 ## Billing context (handled separately)
 
-Collie bills FC work — including this engagement — under **Palm Family Ventures,
-LLC (PFV)**, but invoices must NOT read "Port A Local." Plan: a separate
-standalone **Farley Creative** Stripe account under PFV. Tracked in workspace
-memory (`project_account_structure.md` + `project_palms_island_moorings.md`),
-not in this repo. **Three billing identities to keep distinct:** Port A Local
-(PFV marketplace) · Farley Creative (PFV agency invoicing) · The Palms pre-sales
-deposits (future, likely the developer's entity — not ours).
-
-## Open questions for Collie / the developer
-
-- Real residence offering (count, sizes, plans, pricing, completion timing)
-- Brand direction, name treatment, renders, site plan
-- Inbound interest address on `thepalms.dev`
-- Does The Palms get its own ops hub, or do leads route elsewhere first?
+Farley Creative's billing is tracked in the operator's private workspace
+memory, not in this public repo. Three billing identities stay distinct:
+Port A Local · Farley Creative · The Palms pre-sales deposits (future, likely
+the developer's own entity, not ours).
