@@ -6,7 +6,7 @@ import { RegisterInterestForm } from "@/components/RegisterInterestForm";
 
 export const metadata: Metadata = {
   title: "Join the Founders' List",
-  description: `Join the Founders' List for ${SITE.name} — the final marina-front homesites in Island Moorings, Port Aransas.`,
+  description: `Join the Founders' List for ${SITE.name}. The final marina-front homesites in Island Moorings, Port Aransas.`,
 };
 
 export default function RegisterPage() {

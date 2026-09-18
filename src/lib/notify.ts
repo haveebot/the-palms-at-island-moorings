@@ -21,7 +21,7 @@ export async function notifyNewLead(lead: NewLead): Promise<void> {
   if (!to || !emailReady()) return; // off until Workspace is connected
 
   const text = [
-    `New Founders' List inquiry — ${SITE.shortName}`,
+    `New Founders' List inquiry · ${SITE.shortName}`,
     "",
     `Name:   ${lead.fullName}`,
     `Email:  ${lead.email}`,

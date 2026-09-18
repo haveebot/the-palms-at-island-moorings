@@ -12,11 +12,11 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: {
-    default: `${SITE.name} — The Last Homesites in Island Moorings`,
+    default: `${SITE.name} · The Last Homesites in Island Moorings`,
     template: `%s · ${SITE.shortName}`,
   },
   description:
-    "The final 21 marina-front homesites in Island Moorings — Port Aransas' original waterfront community, established 1960. Join the Founders' List for first look, first pricing, and first choice.",
+    "The final 21 marina-front homesites in Island Moorings, Port Aransas' original waterfront community, established 1960. Join the Founders' List for first look, first pricing, and first choice.",
   applicationName: SITE.name,
   keywords: [
     "Island Moorings",

@@ -90,10 +90,10 @@ export default function Home() {
             </h2>
             <p className="mx-auto mt-6 max-w-2xl text-[var(--color-shell)]/80">
               Island Moorings was planned in 1960 as Port Aransas&rsquo; original
-              waterfront community — homes built around a private, wind-protected
+              waterfront community, with homes built around a private, wind-protected
               marina and yacht club. The Palms is its final undeveloped parcel: a
               limited release of marina-front homesites. Renderings and reservation
-              details are being finalized — join the Founders&rsquo; List to be first.
+              details are being finalized. Join the Founders&rsquo; List to be first.
             </p>
           </Reveal>
         </div>
@@ -109,7 +109,7 @@ export default function Home() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/brand/offering/offering-banner.jpg"
-                alt="Twenty-one marina-front homesites, 5,000–10,000 square feet — The Palms at Island Moorings"
+                alt="Twenty-one marina-front homesites, 5,000–10,000 square feet, at The Palms at Island Moorings"
                 className="block w-full"
               />
             </picture>
@@ -130,7 +130,7 @@ export default function Home() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/brand/offering/offering-mobile-v2.jpg"
-                alt="Twenty-one marina-front homesites, 5,000–10,000 sq ft — the only investment of its kind in Island Moorings"
+                alt="Twenty-one marina-front homesites, 5,000–10,000 sq ft. The only investment of its kind in Island Moorings."
                 className="block w-full"
               />
             </picture>
@@ -153,7 +153,7 @@ export default function Home() {
               Island Moorings, Port Aransas.
             </h2>
             <p className="mt-6 text-[var(--color-muted)]">
-              Set along the private Island Moorings Marina &amp; Yacht Club — a
+              Set along the private Island Moorings Marina &amp; Yacht Club, a
               wind-protected, 245-slip harbor with a fast run to the Ship Channel
               and the Gulf. Minutes from the beach, the golf course, and the heart
               of a town built on the water. Your boat in your backyard.
@@ -163,7 +163,7 @@ export default function Home() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/brand/location/island-moorings-marina.jpg"
-              alt="The Island Moorings marina at sunset — Port Aransas"
+              alt="The Island Moorings marina at sunset, Port Aransas"
               className="aspect-[3/2] w-full rounded-lg border border-[var(--color-sand)] object-cover shadow-sm"
             />
           </Reveal>

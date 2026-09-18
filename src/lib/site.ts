@@ -10,7 +10,7 @@
 export const SITE = {
   name: "The Palms at Island Moorings",
   shortName: "The Palms",
-  tagline: "The last homesites in Island Moorings — Port Aransas' original marina community.",
+  tagline: "The last homesites in Island Moorings, Port Aransas' original marina community.",
   location: "Island Moorings · Port Aransas, Texas",
 
   publicDomain: "thepalmsatislandmoorings.com",

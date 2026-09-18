@@ -86,7 +86,7 @@ export async function sendBroadcastChunk(input: {
         const link = await unsubUrl(c.id, secret);
         const text =
           personalize(input.body, c) +
-          `\n\n—\n${SITE.name}\n${address}\n\nPrefer not to hear from us? Unsubscribe: ${link}`;
+          `\n\n${SITE.name}\n${address}\n\nPrefer not to hear from us? Unsubscribe: ${link}`;
         await sendMail({ to: c.email, subject: personalize(input.subject, c), text, replyTo: input.replyTo });
         sent.push(id);
       } catch {
